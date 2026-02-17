@@ -10,7 +10,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class DatabaseSettings(BaseSettings):
     """Database connection settings. Loaded via python-dotenv from .env file."""
 
-    model_config = SettingsConfigDict(env_prefix="POSTGRES_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="POSTGRES_")
 
     user: str = "carousel"
     password: SecretStr = SecretStr("carousel_secret")
@@ -30,13 +30,13 @@ class DatabaseSettings(BaseSettings):
 
 
 class RedisSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="REDIS_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="REDIS_")
 
     url: str = "redis://localhost:6379/0"
 
 
 class S3Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="S3_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="S3_")
 
     endpoint_url: str = "http://localhost:9000"
     access_key: SecretStr = SecretStr("minioadmin")
@@ -46,7 +46,7 @@ class S3Settings(BaseSettings):
 
 
 class TelegramSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TELEGRAM_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="TELEGRAM_")
 
     bot_token: SecretStr = SecretStr("")
     webhook_url: str = ""
@@ -54,7 +54,7 @@ class TelegramSettings(BaseSettings):
 
 
 class AnthropicSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="ANTHROPIC_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="ANTHROPIC_")
 
     api_key: SecretStr = SecretStr("")
     model: str = "claude-sonnet-4-20250514"
@@ -62,14 +62,14 @@ class AnthropicSettings(BaseSettings):
 
 
 class GeminiSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="GEMINI_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="GEMINI_")
 
     api_key: SecretStr = SecretStr("")
     model: str = "gemini-2.0-flash-exp"
 
 
 class YooKassaSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="YOOKASSA_")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="YOOKASSA_")
 
     shop_id: str = "000000"
     secret_key: SecretStr = SecretStr("")

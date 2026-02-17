@@ -2,7 +2,7 @@
 
 # ── Docker ────────────────────────────────────────────────
 up:
-	docker compose -f docker/docker-compose.yml up -d postgres redis minio
+	docker compose -f docker/docker-compose.yml up -d minio
 
 down:
 	docker compose -f docker/docker-compose.yml down
@@ -12,7 +12,7 @@ up-all:
 
 # ── Development ───────────────────────────────────────────
 dev:
-	uv run uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+	uv run uvicorn src.main:app --host 0.0.0.0 --port 8080 --reload
 
 worker:
 	uv run celery -A src.worker.celery_app worker --loglevel=info --concurrency=2

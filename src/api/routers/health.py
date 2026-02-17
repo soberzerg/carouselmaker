@@ -18,7 +18,7 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@router.get("/readiness")
+@router.get("/readiness", response_model=None)
 async def readiness(
     session: AsyncSession = Depends(get_db_session),  # noqa: B008
 ) -> dict[str, str] | JSONResponse:
