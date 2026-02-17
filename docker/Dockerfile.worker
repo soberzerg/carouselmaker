@@ -1,0 +1,31 @@
+# ── Builder stage ─────────────────────────────────────────
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
+
+WORKDIR /app
+
+COPY pyproject.toml uv.lock ./
+COPY README.md ./
+COPY src/__init__.py src/__init__.py
+RUN uv sync --frozen --no-dev --no-editable
+
+COPY src/ src/
+COPY assets/ assets/
+
+# ── Runtime stage ─────────────────────────────────────────
+FROM python:3.13-slim-bookworm AS runtime
+
+WORKDIR /app
+
+# System deps for Pillow
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libfreetype6 libjpeg62-turbo libpng16-16 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/assets /app/assets
+
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app"
+
+CMD ["celery", "-A", "src.worker.celery_app", "worker", "--loglevel=info", "--concurrency=2"]

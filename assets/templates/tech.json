@@ -1,0 +1,17 @@
+{
+  "name": "Tech",
+  "bg_color": "#0A1628",
+  "text_color": "#E0E0E0",
+  "accent_color": "#00E5FF",
+  "heading_font_size": 72,
+  "body_font_size": 36,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.65,
+  "padding": 80,
+  "line_spacing": 1.4,
+  "extra": {
+    "mood": "futuristic, technical, innovative",
+    "description": "Dark blue with cyan accents"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Corporate",
+  "bg_color": "#1B2A4A",
+  "text_color": "#FFFFFF",
+  "accent_color": "#4FC3F7",
+  "heading_font_size": 68,
+  "body_font_size": 34,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.5,
+  "padding": 85,
+  "line_spacing": 1.45,
+  "extra": {
+    "mood": "professional, trustworthy, authoritative",
+    "description": "Navy blue with white text"
+  }
+}

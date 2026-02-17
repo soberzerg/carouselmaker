@@ -1,0 +1,17 @@
+{
+  "name": "Minimalist",
+  "bg_color": "#FAFAFA",
+  "text_color": "#333333",
+  "accent_color": "#111111",
+  "heading_font_size": 68,
+  "body_font_size": 34,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.3,
+  "padding": 90,
+  "line_spacing": 1.5,
+  "extra": {
+    "mood": "clean, elegant, modern",
+    "description": "White and grey with modern typography"
+  }
+}

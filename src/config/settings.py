@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+from pydantic import Field, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class DatabaseSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="POSTGRES_")
+
+    user: str = "carousel"
+    password: SecretStr = SecretStr("carousel_secret")
+    host: str = "localhost"
+    port: int = 5432
+    db: str = "carouselmaker"
+
+    @property
+    def async_url(self) -> str:
+        pwd = self.password.get_secret_value()
+        return f"postgresql+asyncpg://{self.user}:{pwd}@{self.host}:{self.port}/{self.db}"
+
+    @property
+    def sync_url(self) -> str:
+        pwd = self.password.get_secret_value()
+        return f"postgresql+psycopg2://{self.user}:{pwd}@{self.host}:{self.port}/{self.db}"
+
+
+class RedisSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="REDIS_")
+
+    url: str = "redis://localhost:6379/0"
+
+
+class S3Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="S3_")
+
+    endpoint_url: str = "http://localhost:9000"
+    access_key: SecretStr = SecretStr("minioadmin")
+    secret_key: SecretStr = SecretStr("minioadmin")
+    bucket: str = "carousels"
+    region: str = "us-east-1"
+
+
+class TelegramSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="TELEGRAM_")
+
+    bot_token: SecretStr = SecretStr("")
+    webhook_url: str = ""
+    webhook_secret: SecretStr = SecretStr("change-me")
+
+
+class AnthropicSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="ANTHROPIC_")
+
+    api_key: SecretStr = SecretStr("")
+    model: str = "claude-sonnet-4-20250514"
+    max_tokens: int = 4096
+
+
+class GeminiSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="GEMINI_")
+
+    api_key: SecretStr = SecretStr("")
+    model: str = "gemini-2.0-flash-exp"
+
+
+class YooKassaSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="YOOKASSA_")
+
+    shop_id: str = "000000"
+    secret_key: SecretStr = SecretStr("")
+    webhook_secret: SecretStr = SecretStr("")
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    app_env: str = "development"
+    app_debug: bool = False
+    app_log_level: str = "INFO"
+    admin_api_key: SecretStr = SecretStr("change-me")
+
+    db: DatabaseSettings = Field(default_factory=DatabaseSettings)
+    redis: RedisSettings = Field(default_factory=RedisSettings)
+    s3: S3Settings = Field(default_factory=S3Settings)
+    telegram: TelegramSettings = Field(default_factory=TelegramSettings)
+    anthropic: AnthropicSettings = Field(default_factory=AnthropicSettings)
+    gemini: GeminiSettings = Field(default_factory=GeminiSettings)
+    yookassa: YooKassaSettings = Field(default_factory=YooKassaSettings)
+
+    @property
+    def is_dev(self) -> bool:
+        return self.app_env == "development"
+
+
+def get_settings() -> Settings:
+    return Settings()
