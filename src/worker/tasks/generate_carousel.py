@@ -16,7 +16,14 @@ async def _generate_carousel(
     status_message_id: int,
 ) -> None:
     """Async pipeline: AI copy -> AI image -> render -> S3 -> send to Telegram."""
+    from src.db.session import get_engine
     from src.services.carousel_service import CarouselService
+
+    # Dispose stale connections from previous event loops.
+    # Each asyncio.run() creates a new loop, but the cached engine's pool
+    # may hold connections bound to the old loop, causing
+    # "another operation is in progress" errors from asyncpg.
+    await get_engine().dispose()
 
     service = CarouselService()
     await service.generate_and_send(

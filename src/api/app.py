@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         logger.info("Telegram webhook set: %s", webhook_url)
     else:
         logger.info("No webhook URL configured — starting long-polling mode")
-        polling_task = asyncio.create_task(dp.start_polling(bot))
+        polling_task = asyncio.create_task(dp.start_polling(bot, handle_signals=False))
 
     yield
 

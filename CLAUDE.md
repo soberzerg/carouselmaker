@@ -178,6 +178,28 @@ tests/
 - **Settings:** Nested pydantic-settings — `Settings.db`, `Settings.redis`, `Settings.s3`, etc.
 - **Bot middlewares:** Auth middleware auto-registers users; throttle middleware uses Redis for rate limiting
 
+## Agent Usage
+
+Claude Code has specialized agents (subagent types) that should be used for specific tasks in this project:
+
+| Agent | When to use |
+|-------|-------------|
+| `telegram-backend-architect` | **Primary agent for Phase 1.** Any backend work: bot handlers, FastAPI endpoints, SQLAlchemy models, Alembic migrations, Celery tasks, Docker Compose, Redis caching, DI wiring. Matches our full stack: aiogram + FastAPI + PostgreSQL + Redis + Celery + SQLAlchemy + Alembic + UV + Docker. |
+| `react-dev` | **Phase 2 frontend.** React components, pages, routing, Tailwind styling, Shadcn UI, i18n setup. Use when building the web app. |
+| `code-review` | Review recent git changes, PR diffs, or newly written code before committing. |
+| `refactor-after-review` | Apply code review feedback — restructure code, fix patterns, extract modules. |
+| `prd-writer` | Create or update Product Requirements Documents. PRD is in `Carousel PRD.md`. |
+| `Explore` | Deep codebase exploration when simple Grep/Glob isn't enough. |
+| `Plan` | Design implementation strategy for complex multi-file features before writing code. |
+
+### Rules
+
+- For any backend task (models, handlers, endpoints, tasks, Docker, migrations) — always prefer `telegram-backend-architect`
+- For frontend tasks (Phase 2) — always prefer `react-dev`
+- After finishing a feature, run `code-review` before committing
+- When a review has comments to address, use `refactor-after-review`
+- Use `Plan` agent before starting complex features that touch 3+ layers (e.g., new entity end-to-end)
+
 ## Environment Variables
 
 Copy `.env.example` to `.env` and fill in API keys. Key groups:
