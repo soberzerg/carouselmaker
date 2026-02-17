@@ -5,7 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from src.models.base import Base
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///test.db"
+# WARNING: Using SQLite for tests. Some PostgreSQL-specific features
+# (JSONB, FOR UPDATE, array types) are not available. Use integration
+# tests with a real PostgreSQL instance for full coverage.
+TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
 
 @pytest.fixture

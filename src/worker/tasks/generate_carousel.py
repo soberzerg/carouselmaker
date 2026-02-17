@@ -15,7 +15,7 @@ async def _generate_carousel(
     style_slug: str,
     status_message_id: int,
 ) -> None:
-    """Async pipeline: AI copy → AI image → render → S3 → send to Telegram."""
+    """Async pipeline: AI copy -> AI image -> render -> S3 -> send to Telegram."""
     from src.services.carousel_service import CarouselService
 
     service = CarouselService()
@@ -28,9 +28,14 @@ async def _generate_carousel(
     )
 
 
-@celery_app.task(name="src.worker.tasks.generate_carousel.generate_carousel_task", bind=True)
-def generate_carousel_task(
-    self,  # type: ignore[no-untyped-def]
+@celery_app.task(  # type: ignore[untyped-decorator]
+    name="src.worker.tasks.generate_carousel.generate_carousel_task",
+    bind=True,
+    max_retries=2,
+    default_retry_delay=30,
+)
+def generate_carousel_task(  # type: ignore[no-untyped-def]
+    self,  # noqa: ANN001
     user_id: int,
     telegram_chat_id: int,
     input_text: str,
@@ -52,4 +57,8 @@ def generate_carousel_task(
         return {"status": "completed"}
     except Exception as e:
         logger.exception("Carousel generation failed for user %d: %s", user_id, e)
-        return {"status": "failed", "error": str(e)}
+        try:
+            self.retry(exc=e)
+        except self.MaxRetriesExceededError:
+            logger.error("Max retries exceeded for user %d", user_id)
+        raise

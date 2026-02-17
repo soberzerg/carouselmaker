@@ -13,7 +13,11 @@ class CopywriterProvider(ABC):
         style_slug: str,
         slide_count: int,
     ) -> list[SlideContent]:
-        """Generate slide content from user text."""
+        """Generate slide content from user text.
+
+        Implementations should apply a reasonable timeout (e.g. 120s)
+        and raise on failure.
+        """
         ...
 
 
@@ -24,6 +28,11 @@ class ImageProvider(ABC):
         style_slug: str,
         slide_heading: str,
         slide_position: int,
-    ) -> bytes:
-        """Generate a background image for a slide. Returns PNG bytes."""
+    ) -> bytes | None:
+        """Generate a background image for a slide.
+
+        Returns PNG bytes on success, or None if image generation fails.
+        Implementations should apply a reasonable timeout and handle
+        transient API errors gracefully.
+        """
         ...

@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6 libjpeg62-turbo libpng16-16 \
     && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user
+RUN groupadd --gid 1000 appuser && useradd --uid 1000 --gid appuser --no-create-home appuser
+
 # Copy venv from builder
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
@@ -34,6 +37,8 @@ COPY --from=builder /app/alembic.ini /app/alembic.ini
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
+
+USER appuser
 
 EXPOSE 8000
 

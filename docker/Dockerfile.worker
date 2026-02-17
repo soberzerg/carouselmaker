@@ -10,6 +10,7 @@ RUN uv sync --frozen --no-dev --no-editable
 
 COPY src/ src/
 COPY assets/ assets/
+# Note: alembic/ is intentionally omitted — migrations run from the app container
 
 # ── Runtime stage ─────────────────────────────────────────
 FROM python:3.13-slim-bookworm AS runtime
@@ -21,11 +22,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6 libjpeg62-turbo libpng16-16 \
     && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user
+RUN groupadd --gid 1000 appuser && useradd --uid 1000 --gid appuser --no-create-home appuser
+
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/assets /app/assets
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
+
+USER appuser
 
 CMD ["celery", "-A", "src.worker.celery_app", "worker", "--loglevel=info", "--concurrency=2"]

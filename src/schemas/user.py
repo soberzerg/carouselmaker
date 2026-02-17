@@ -19,5 +19,6 @@ class UserRead(UserBase):
     id: int
     credit_balance: int
     created_at: datetime
+    updated_at: datetime
 
     model_config = {"from_attributes": True}

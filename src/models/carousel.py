@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import enum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import Base, TimestampMixin
+
+if TYPE_CHECKING:
+    from src.models.slide import Slide
+    from src.models.user import User
 
 
 class GenerationStatus(enum.StrEnum):
@@ -23,7 +28,9 @@ class CarouselGeneration(TimestampMixin, Base):
     __tablename__ = "carousel_generations"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     input_text: Mapped[str] = mapped_column(Text, nullable=False)
     style_slug: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[GenerationStatus] = mapped_column(
@@ -37,12 +44,12 @@ class CarouselGeneration(TimestampMixin, Base):
 
     user: Mapped[User] = relationship("User", back_populates="carousel_generations")
     slides: Mapped[list[Slide]] = relationship(
-        "Slide", back_populates="carousel", lazy="selectin", order_by="Slide.position"
+        "Slide",
+        back_populates="carousel",
+        lazy="selectin",
+        order_by="Slide.position",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:
         return f"<CarouselGeneration id={self.id} status={self.status}>"
-
-
-from src.models.slide import Slide  # noqa: E402, F401
-from src.models.user import User  # noqa: E402, F401

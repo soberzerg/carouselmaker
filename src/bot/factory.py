@@ -4,6 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
+from redis.asyncio import Redis
 
 from src.bot.handlers import callbacks, generate, start, styles
 from src.bot.handlers import credits as credits_handler
@@ -23,10 +24,14 @@ def create_dispatcher(settings: Settings) -> Dispatcher:
     storage = RedisStorage.from_url(settings.redis.url)
     dp = Dispatcher(storage=storage)
 
+    # Shared Redis instance for middlewares
+    redis = Redis.from_url(settings.redis.url)
+
     # Register middlewares
     dp.message.middleware(AuthMiddleware())
     dp.callback_query.middleware(AuthMiddleware())
-    dp.message.middleware(ThrottleMiddleware(settings.redis.url))
+    dp.message.middleware(ThrottleMiddleware(redis))
+    dp.callback_query.middleware(ThrottleMiddleware(redis))
 
     # Register handlers
     dp.include_router(start.router)

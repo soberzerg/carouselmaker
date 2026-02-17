@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import logging
+
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config.constants import FREE_CREDITS_ON_START
 from src.models.credit import CreditTransaction, TransactionType
 from src.models.user import User
+
+logger = logging.getLogger(__name__)
 
 
 async def get_or_create_user(
@@ -34,7 +39,16 @@ async def get_or_create_user(
         credit_balance=FREE_CREDITS_ON_START,
     )
     session.add(user)
-    await session.flush()
+
+    try:
+        await session.flush()
+    except IntegrityError:
+        # Race condition: another request created the user concurrently
+        await session.rollback()
+        logger.warning("Concurrent user creation for telegram_id=%d, re-fetching", telegram_id)
+        result = await session.execute(stmt)
+        user = result.scalar_one()
+        return user
 
     # Record welcome bonus transaction
     tx = CreditTransaction(

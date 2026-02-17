@@ -23,24 +23,32 @@ class GeminiImageProvider(ImageProvider):
         style_slug: str,
         slide_heading: str,
         slide_position: int,
-    ) -> bytes:
+    ) -> bytes | None:
         style_desc = STYLE_DESCRIPTIONS.get(style_slug, "modern and clean")
         prompt = IMAGE_PROMPT_TEMPLATE.format(
             style_description=style_desc,
             slide_heading=slide_heading,
         )
 
-        response = await self.client.aio.models.generate_content(
-            model=self.model,
-            contents=prompt,
-        )
+        try:
+            response = await self.client.aio.models.generate_content(
+                model=self.model,
+                contents=prompt,
+            )
+        except Exception:
+            logger.exception("Gemini API call failed for slide %d", slide_position)
+            return None
+
+        if not response.candidates:
+            logger.warning("Gemini returned no candidates for slide %d", slide_position)
+            return None
 
         # If the model returns an image, extract bytes
-        # Gemini image generation returns inline_data for images
-        for part in response.candidates[0].content.parts:  # type: ignore[union-attr]
-            if hasattr(part, "inline_data") and part.inline_data:
-                return part.inline_data.data  # type: ignore[return-value]
+        content = response.candidates[0].content
+        if content and content.parts:
+            for part in content.parts:
+                if hasattr(part, "inline_data") and part.inline_data:
+                    return part.inline_data.data
 
-        # Fallback: return empty bytes (renderer will use solid color)
         logger.warning("Gemini did not return an image for slide %d", slide_position)
-        return b""
+        return None

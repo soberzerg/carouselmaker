@@ -4,8 +4,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from src.bot.keyboards.inline import STYLE_DISPLAY_NAMES
-from src.config.constants import AVAILABLE_STYLES
+from src.config.constants import AVAILABLE_STYLES, STYLE_DISPLAY_NAMES
 
 router = Router()
 

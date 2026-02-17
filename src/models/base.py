@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 
 from sqlalchemy import DateTime, func
@@ -23,7 +22,3 @@ class TimestampMixin:
         onupdate=func.now(),
         nullable=False,
     )
-
-
-def generate_uuid() -> str:
-    return str(uuid.uuid4())

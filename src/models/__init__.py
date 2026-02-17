@@ -1,4 +1,4 @@
-from src.models.base import Base
+from src.models.base import Base, TimestampMixin
 from src.models.carousel import CarouselGeneration, GenerationStatus
 from src.models.credit import CreditTransaction, TransactionType
 from src.models.slide import Slide
@@ -12,6 +12,7 @@ __all__ = [
     "GenerationStatus",
     "Slide",
     "StylePreset",
+    "TimestampMixin",
     "TransactionType",
     "User",
 ]

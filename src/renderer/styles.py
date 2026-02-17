@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+import logging
+from dataclasses import dataclass, field, fields
+from functools import lru_cache
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent.parent / "assets" / "templates"
 
@@ -30,11 +34,22 @@ class StyleConfig:
     overlay_opacity: float = 0.6
     padding: int = 80
     line_spacing: float = 1.4
+    heading_body_gap: int = 40
+    heading_alignment: str = "left"
     extra: dict[str, object] = field(default_factory=dict)
 
 
+# Field names that map directly from JSON to StyleConfig
+_STYLE_FIELD_NAMES = {f.name for f in fields(StyleConfig) if f.name not in ("slug", "extra")}
+
+
+@lru_cache(maxsize=16)
 def load_style_config(slug: str) -> StyleConfig:
     """Load style config from JSON template file."""
+    if not ASSETS_DIR.exists():
+        logger.warning("Assets directory not found: %s, using defaults", ASSETS_DIR)
+        return StyleConfig(slug=slug, name=slug.replace("_", " ").title())
+
     path = ASSETS_DIR / f"{slug}.json"
     if not path.exists():
         return StyleConfig(slug=slug, name=slug.replace("_", " ").title())
@@ -42,18 +57,12 @@ def load_style_config(slug: str) -> StyleConfig:
     with open(path) as f:
         data = json.load(f)
 
-    return StyleConfig(
-        slug=slug,
-        name=data.get("name", slug),
-        bg_color=data.get("bg_color", "#1A1A1A"),
-        text_color=data.get("text_color", "#FFFFFF"),
-        accent_color=data.get("accent_color", "#FFD600"),
-        heading_font_size=data.get("heading_font_size", 72),
-        body_font_size=data.get("body_font_size", 36),
-        heading_font=data.get("heading_font", "Arial"),
-        body_font=data.get("body_font", "Arial"),
-        overlay_opacity=data.get("overlay_opacity", 0.6),
-        padding=data.get("padding", 80),
-        line_spacing=data.get("line_spacing", 1.4),
-        extra=data.get("extra", {}),
-    )
+    kwargs: dict[str, object] = {"slug": slug}
+    for field_name in _STYLE_FIELD_NAMES:
+        if field_name in data:
+            kwargs[field_name] = data[field_name]
+        elif field_name == "name":
+            kwargs["name"] = data.get("name", slug)
+    kwargs["extra"] = data.get("extra", {})
+
+    return StyleConfig(**kwargs)  # type: ignore[arg-type]

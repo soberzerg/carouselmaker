@@ -2,14 +2,7 @@ from __future__ import annotations
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from src.config.constants import AVAILABLE_STYLES, CREDIT_PACKS
-
-STYLE_DISPLAY_NAMES: dict[str, str] = {
-    "nano_banana": "Nano Banana",
-    "minimalist": "Minimalist",
-    "tech": "Tech",
-    "corporate": "Corporate",
-}
+from src.config.constants import AVAILABLE_STYLES, CREDIT_PACKS, STYLE_DISPLAY_NAMES
 
 
 def style_picker_keyboard() -> InlineKeyboardMarkup:
@@ -29,7 +22,7 @@ def credit_pack_keyboard() -> InlineKeyboardMarkup:
     buttons = [
         [
             InlineKeyboardButton(
-                text=f"{pack['credits']} credits — {pack['price_rub']} RUB",
+                text=f"{pack.credits} credits \u2014 {pack.price_rub} RUB",
                 callback_data=f"buy:{i}",
             )
         ]
@@ -40,7 +33,5 @@ def credit_pack_keyboard() -> InlineKeyboardMarkup:
 
 def cancel_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Cancel", callback_data="cancel")]
-        ]
+        inline_keyboard=[[InlineKeyboardButton(text="Cancel", callback_data="cancel")]]
     )

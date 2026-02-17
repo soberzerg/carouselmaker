@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hmac
+
 from aiogram.types import Update
 from fastapi import APIRouter, Header, HTTPException, Request
 
@@ -15,7 +17,9 @@ async def telegram_webhook(
 ) -> dict[str, str]:
     settings = get_settings()
     expected_secret = settings.telegram.webhook_secret.get_secret_value()
-    if x_telegram_bot_api_secret_token != expected_secret:
+    if not x_telegram_bot_api_secret_token or not hmac.compare_digest(
+        x_telegram_bot_api_secret_token, expected_secret
+    ):
         raise HTTPException(status_code=403, detail="Invalid webhook secret")
 
     bot = request.app.state.bot

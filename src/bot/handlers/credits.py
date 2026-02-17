@@ -13,8 +13,7 @@ router = Router()
 @router.message(Command("credits"))
 async def cmd_credits(message: Message, db_user: User) -> None:
     await message.answer(
-        f"Your balance: <b>{db_user.credit_balance}</b> credits.\n\n"
-        "Use /buy to purchase more."
+        f"Your balance: <b>{db_user.credit_balance}</b> credits.\n\nUse /buy to purchase more."
     )
 
 

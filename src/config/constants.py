@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 # ── Slide dimensions (Instagram portrait) ────────────────
 SLIDE_WIDTH = 1080
 SLIDE_HEIGHT = 1350
@@ -8,11 +10,18 @@ SLIDE_HEIGHT = 1350
 FREE_CREDITS_ON_START = 3
 CREDITS_PER_CAROUSEL = 1
 
-CREDIT_PACKS: list[dict[str, int]] = [
-    {"credits": 5, "price_rub": 149},
-    {"credits": 15, "price_rub": 349},
-    {"credits": 50, "price_rub": 899},
-]
+
+@dataclass(frozen=True, slots=True)
+class CreditPack:
+    credits: int
+    price_rub: int
+
+
+CREDIT_PACKS: tuple[CreditPack, ...] = (
+    CreditPack(credits=5, price_rub=149),
+    CreditPack(credits=15, price_rub=349),
+    CreditPack(credits=50, price_rub=899),
+)
 
 # ── Generation limits ─────────────────────────────────────
 MAX_SLIDES_PER_CAROUSEL = 10
@@ -34,9 +43,17 @@ STYLE_CORPORATE = "corporate"
 
 DEFAULT_STYLE = STYLE_NANO_BANANA
 
-AVAILABLE_STYLES = [
+AVAILABLE_STYLES: tuple[str, ...] = (
     STYLE_NANO_BANANA,
     STYLE_MINIMALIST,
     STYLE_TECH,
     STYLE_CORPORATE,
-]
+)
+
+# ── Style display names ──────────────────────────────────
+STYLE_DISPLAY_NAMES: dict[str, str] = {
+    STYLE_NANO_BANANA: "Nano Banana",
+    STYLE_MINIMALIST: "Minimalist",
+    STYLE_TECH: "Tech",
+    STYLE_CORPORATE: "Corporate",
+}

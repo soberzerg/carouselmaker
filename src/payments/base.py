@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class PaymentProvider(ABC):
@@ -10,6 +11,8 @@ class PaymentProvider(ABC):
         ...
 
     @abstractmethod
-    async def verify_webhook(self, payload: dict, signature: str) -> bool:
-        """Verify webhook signature."""
+    async def verify_webhook(
+        self, payload: dict[str, Any], signature: str
+    ) -> dict[str, Any] | None:
+        """Verify webhook signature. Returns parsed payload on success, None on failure."""
         ...

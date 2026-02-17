@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
+from aiogram.types import BotCommand
 from fastapi import FastAPI
 
 from src.api.routers import admin, health, payments, webhook
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     settings = get_settings()
 
     # Create bot & dispatcher
@@ -24,6 +25,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     # Store on app state for webhook access
     app.state.bot = bot
     app.state.dp = dp
+
+    # Set bot commands menu
+    await bot.set_my_commands(
+        [
+            BotCommand(command="generate", description="Create a new carousel"),
+            BotCommand(command="styles", description="Browse style presets"),
+            BotCommand(command="credits", description="Check credit balance"),
+            BotCommand(command="buy", description="Purchase more credits"),
+            BotCommand(command="help", description="Show help message"),
+        ]
+    )
 
     # Set webhook
     webhook_url = settings.telegram.webhook_url

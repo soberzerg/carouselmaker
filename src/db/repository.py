@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import select
+from sqlalchemy import inspect, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.base import Base
@@ -15,7 +15,7 @@ class Repository[T: Base]:
         return await self.session.get(self.model, entity_id)
 
     async def get_all(self, limit: int = 100, offset: int = 0) -> list[T]:
-        stmt = select(self.model).limit(limit).offset(offset)
+        stmt = select(self.model).order_by(self.model.id).limit(limit).offset(offset)  # type: ignore[attr-defined]
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
 
@@ -26,7 +26,11 @@ class Repository[T: Base]:
         return instance
 
     async def update(self, instance: T, **kwargs: object) -> T:
+        mapper = inspect(self.model)
+        valid_columns = {c.key for c in mapper.column_attrs}
         for key, value in kwargs.items():
+            if key not in valid_columns:
+                raise ValueError(f"Invalid attribute '{key}' for {self.model.__name__}")
             setattr(instance, key, value)
         await self.session.flush()
         return instance

@@ -10,6 +10,23 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list[s
     current_line: list[str] = []
 
     for word in words:
+        # Truncate single words that exceed max_width
+        bbox = font.getbbox(word)
+        word_width = bbox[2] - bbox[0]
+        if word_width > max_width and not current_line:
+            # Truncate with ellipsis
+            truncated = word
+            while truncated:
+                test = truncated + "..."
+                tw = font.getbbox(test)[2] - font.getbbox(test)[0]
+                if tw <= max_width:
+                    lines.append(test)
+                    break
+                truncated = truncated[:-1]
+            else:
+                lines.append(word[:3] + "...")
+            continue
+
         test_line = " ".join([*current_line, word])
         bbox = font.getbbox(test_line)
         width = bbox[2] - bbox[0]
@@ -25,17 +42,3 @@ def wrap_text(text: str, font: ImageFont.FreeTypeFont, max_width: int) -> list[s
         lines.append(" ".join(current_line))
 
     return lines
-
-
-def calculate_text_height(
-    lines: list[str],
-    font: ImageFont.FreeTypeFont,
-    line_spacing: float,
-) -> int:
-    """Calculate total height of wrapped text block."""
-    if not lines:
-        return 0
-
-    line_height = font.getbbox("Ag")[3]
-    total = int(line_height * len(lines) * line_spacing)
-    return total

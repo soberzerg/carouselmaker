@@ -22,5 +22,6 @@ class CarouselGenerationRead(BaseModel):
     celery_task_id: str | None = None
     error_message: str | None = None
     created_at: datetime
+    updated_at: datetime
 
     model_config = {"from_attributes": True}

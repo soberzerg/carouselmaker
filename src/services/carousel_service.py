@@ -9,16 +9,20 @@ import httpx
 from src.ai.anthropic_provider import AnthropicCopywriter
 from src.ai.gemini_provider import GeminiImageProvider
 from src.config.constants import (
+    AVAILABLE_STYLES,
+    CREDITS_PER_CAROUSEL,
+    MAX_INPUT_TEXT_LENGTH,
     MAX_SLIDES_PER_CAROUSEL,
     MIN_SLIDES_PER_CAROUSEL,
     S3_CAROUSEL_PREFIX,
 )
 from src.config.settings import get_settings
-from src.db.session import AsyncSessionLocal
+from src.db.session import get_session_factory
 from src.models.carousel import CarouselGeneration, GenerationStatus
 from src.models.slide import Slide
 from src.renderer.engine import SlideRenderer
 from src.renderer.styles import load_style_config
+from src.services.credit_service import refund_credits
 from src.storage.s3 import S3Client
 
 logger = logging.getLogger(__name__)
@@ -38,10 +42,17 @@ class CarouselService:
         style_slug: str,
         status_message_id: int,
     ) -> None:
+        # Input validation
+        if len(input_text) > MAX_INPUT_TEXT_LENGTH:
+            raise ValueError(f"Input text exceeds maximum length of {MAX_INPUT_TEXT_LENGTH}")
+        if style_slug not in AVAILABLE_STYLES:
+            raise ValueError(f"Unknown style slug: {style_slug}")
+
         settings = get_settings()
         bot_token = settings.telegram.bot_token.get_secret_value()
+        factory = get_session_factory()
 
-        async with AsyncSessionLocal() as session:
+        async with factory() as session:
             # Create DB record
             generation = CarouselGeneration(
                 user_id=user_id,
@@ -66,13 +77,16 @@ class CarouselService:
                     style_slug=style_slug,
                     slide_count=slide_count,
                 )
+
+                # Enforce slide count limits after AI returns
+                slides_content = slides_content[:MAX_SLIDES_PER_CAROUSEL]
                 generation.slide_count = len(slides_content)
 
                 # Step 2: Image Generation
                 generation.status = GenerationStatus.IMAGE_GENERATION
                 await session.commit()
 
-                bg_images: list[bytes] = []
+                bg_images: list[bytes | None] = []
                 for sc in slides_content:
                     bg = await self.image_provider.generate_background(
                         style_slug=style_slug,
@@ -90,7 +104,7 @@ class CarouselService:
                 rendered_slides: list[bytes] = []
 
                 for i, sc in enumerate(slides_content):
-                    bg = bg_images[i] if bg_images[i] else None
+                    bg = bg_images[i]
                     png_bytes = renderer.render(
                         heading=sc.heading,
                         body_text=sc.body_text,
@@ -130,13 +144,15 @@ class CarouselService:
                     files = {}
                     for i, png_bytes in enumerate(rendered_slides):
                         attach_name = f"slide_{i}"
-                        media.append({
-                            "type": "photo",
-                            "media": f"attach://{attach_name}",
-                        })
+                        media.append(
+                            {
+                                "type": "photo",
+                                "media": f"attach://{attach_name}",
+                            }
+                        )
                         files[attach_name] = (f"{attach_name}.png", png_bytes, "image/png")
 
-                    await http.post(
+                    resp = await http.post(
                         f"https://api.telegram.org/bot{bot_token}/sendMediaGroup",
                         data={
                             "chat_id": telegram_chat_id,
@@ -145,6 +161,10 @@ class CarouselService:
                         files=files,
                         timeout=60,
                     )
+                    resp_data = resp.json()
+                    if resp.status_code != 200 or not resp_data.get("ok"):
+                        desc = resp_data.get("description", "")
+                        raise RuntimeError(f"sendMediaGroup failed: {resp.status_code} {desc}")
 
                     # Delete status message
                     await http.post(
@@ -165,6 +185,18 @@ class CarouselService:
                 generation.error_message = str(e)[:500]
                 await session.commit()
 
+                # Refund credits on failure
+                try:
+                    await refund_credits(
+                        session=session,
+                        user_id=user_id,
+                        amount=CREDITS_PER_CAROUSEL,
+                        generation_id=generation.id,
+                    )
+                    await session.commit()
+                except Exception:
+                    logger.exception("Failed to refund credits for user %d", user_id)
+
                 # Notify user of failure
                 async with httpx.AsyncClient() as http:
                     await http.post(
@@ -173,7 +205,7 @@ class CarouselService:
                             "chat_id": telegram_chat_id,
                             "text": (
                                 "Sorry, carousel generation failed. "
-                                "Your credits have been charged — please contact support."
+                                "Your credits have been refunded."
                             ),
                         },
                         timeout=10,

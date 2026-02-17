@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import hmac
 from collections.abc import AsyncGenerator
 
-from fastapi import Depends, HTTPException, Security
+from fastapi import HTTPException, Security
 from fastapi.security import APIKeyHeader
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,9 +23,6 @@ async def verify_admin_api_key(
 ) -> str:
     settings = get_settings()
     expected = settings.admin_api_key.get_secret_value()
-    if not api_key or api_key != expected:
+    if not api_key or not hmac.compare_digest(api_key, expected):
         raise HTTPException(status_code=403, detail="Invalid API key")
     return api_key
-
-
-DBSession = Depends(get_db_session)

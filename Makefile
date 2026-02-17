@@ -1,4 +1,4 @@
-.PHONY: up down dev worker beat migrate revision lint test format install
+.PHONY: up down up-all dev worker beat migrate revision downgrade lint format test test-cov install
 
 # ── Docker ────────────────────────────────────────────────
 up:
@@ -25,6 +25,9 @@ migrate:
 	uv run alembic upgrade head
 
 revision:
+ifndef MSG
+	$(error MSG is required. Usage: make revision MSG="your migration message")
+endif
 	uv run alembic revision --autogenerate -m "$(MSG)"
 
 downgrade:
