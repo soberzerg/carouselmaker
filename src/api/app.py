@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -37,8 +39,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         ]
     )
 
-    # Set webhook
+    # Set webhook or start polling
     webhook_url = settings.telegram.webhook_url
+    polling_task: asyncio.Task[None] | None = None
+
     if webhook_url:
         webhook_secret = settings.telegram.webhook_secret.get_secret_value()
         await bot.set_webhook(
@@ -47,10 +51,17 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
             drop_pending_updates=True,
         )
         logger.info("Telegram webhook set: %s", webhook_url)
+    else:
+        logger.info("No webhook URL configured — starting long-polling mode")
+        polling_task = asyncio.create_task(dp.start_polling(bot))
 
     yield
 
     # Cleanup
+    if polling_task is not None:
+        polling_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await polling_task
     if webhook_url:
         await bot.delete_webhook()
     await bot.session.close()

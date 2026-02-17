@@ -32,7 +32,10 @@ def create_celery_app() -> Celery:
         },
     )
 
-    app.autodiscover_tasks(["src.worker.tasks"])
+    app.conf.include = [
+        "src.worker.tasks.generate_carousel",
+        "src.worker.tasks.cleanup",
+    ]
     return app
 
 

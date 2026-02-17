@@ -46,5 +46,8 @@ Thumbs.db
 *.zip
 !assets/**
 
+# Celery
+celerybeat-schedule*
+
 # S3 local data
 minio-data/
