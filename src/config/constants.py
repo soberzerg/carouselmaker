@@ -50,6 +50,13 @@ AVAILABLE_STYLES: tuple[str, ...] = (
     STYLE_CORPORATE,
 )
 
+# ── Image generation ─────────────────────────────────────
+IMAGE_GEN_MAX_RETRIES = 2
+IMAGE_GEN_RETRY_BACKOFF = 1.0
+
+# ── Rendering ────────────────────────────────────────────
+OVERLAY_STRIP_PADDING = 30
+
 # ── Style display names ──────────────────────────────────
 STYLE_DISPLAY_NAMES: dict[str, str] = {
     STYLE_NANO_BANANA: "Nano Banana",

@@ -10,8 +10,10 @@
   "overlay_opacity": 0.5,
   "padding": 85,
   "line_spacing": 1.45,
+  "body_text_bg_opacity": 0.55,
   "extra": {
     "mood": "professional, trustworthy, authoritative",
-    "description": "Navy blue with white text"
+    "description": "Navy blue with white text",
+    "visual_prompt_hints": "Use deep navy blue backgrounds with subtle gradient overlays. Professional geometric shapes or abstract business imagery. Think McKinsey presentation meets modern design. Clean lines and structured layout."
   }
 }

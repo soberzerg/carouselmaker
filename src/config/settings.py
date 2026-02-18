@@ -65,7 +65,8 @@ class GeminiSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", env_prefix="GEMINI_")
 
     api_key: SecretStr = SecretStr("")
-    model: str = "gemini-2.0-flash-exp"
+    model: str = "gemini-2.5-flash-image"
+    max_concurrency: int = 3
 
 
 class YooKassaSettings(BaseSettings):

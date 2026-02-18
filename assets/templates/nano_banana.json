@@ -10,8 +10,10 @@
   "overlay_opacity": 0.7,
   "padding": 80,
   "line_spacing": 1.4,
+  "body_text_bg_opacity": 0.7,
   "extra": {
     "mood": "bold, energetic, viral",
-    "description": "High-contrast yellow on black — the signature Nano Banana style"
+    "description": "High-contrast yellow on black — the signature Nano Banana style",
+    "visual_prompt_hints": "Use dramatic black backgrounds with electric yellow accents. Add subtle geometric patterns or abstract shapes. Think bold street-art energy meets professional design. Neon glow effects on text are welcome."
   }
 }

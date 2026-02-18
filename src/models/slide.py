@@ -23,7 +23,10 @@ class Slide(TimestampMixin, Base):
     )
     position: Mapped[int] = mapped_column(Integer, nullable=False)
     heading: Mapped[str] = mapped_column(String(500), nullable=False)
+    subtitle: Mapped[str] = mapped_column(String(500), server_default="", nullable=False)
     body_text: Mapped[str] = mapped_column(Text, nullable=False)
+    text_position: Mapped[str] = mapped_column(String(20), server_default="none", nullable=False)
+    slide_type: Mapped[str] = mapped_column(String(20), server_default="content", nullable=False)
     image_s3_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
     rendered_s3_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
 

@@ -10,15 +10,6 @@ logger = logging.getLogger(__name__)
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent.parent / "assets" / "templates"
 
-STYLE_DESCRIPTIONS: dict[str, str] = {
-    "nano_banana": (
-        "Bold, high-contrast yellow (#FFD600) and black (#1A1A1A), energetic and attention-grabbing"
-    ),
-    "minimalist": "Clean white and light grey, modern sans-serif, elegant spacing",
-    "tech": "Dark blue (#0A1628) with cyan (#00E5FF) accents, futuristic vibe",
-    "corporate": "Navy blue (#1B2A4A) with white text, professional and trustworthy",
-}
-
 
 @dataclass
 class StyleConfig:
@@ -36,6 +27,7 @@ class StyleConfig:
     line_spacing: float = 1.4
     heading_body_gap: int = 40
     heading_alignment: str = "left"
+    body_text_bg_opacity: float = 0.6
     extra: dict[str, object] = field(default_factory=dict)
 
 

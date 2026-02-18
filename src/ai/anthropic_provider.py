@@ -9,7 +9,7 @@ import anthropic
 from src.ai.base import CopywriterProvider
 from src.ai.prompts import COPYWRITER_SYSTEM_PROMPT, COPYWRITER_USER_PROMPT
 from src.config.settings import get_settings
-from src.schemas.slide import SlideContent
+from src.schemas.slide import SlideContent, SlideType, TextPosition
 
 logger = logging.getLogger(__name__)
 
@@ -61,4 +61,14 @@ class AnthropicCopywriter(CopywriterProvider):
             logger.error("Failed to parse Claude response as JSON: %s", raw_text[:500])
             raise ValueError(f"AI returned invalid JSON: {e}") from e
 
-        return [SlideContent(**s) for s in slides_data]
+        slides = [SlideContent(**s) for s in slides_data]
+
+        # Enforce slide types: first = hook, last = cta
+        if slides:
+            slides[0].slide_type = SlideType.HOOK
+            if slides[0].text_position != TextPosition.NONE and not slides[0].body_text:
+                slides[0].text_position = TextPosition.NONE
+        if len(slides) > 1:
+            slides[-1].slide_type = SlideType.CTA
+
+        return slides

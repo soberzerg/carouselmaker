@@ -10,8 +10,10 @@
   "overlay_opacity": 0.3,
   "padding": 90,
   "line_spacing": 1.5,
+  "body_text_bg_opacity": 0.5,
   "extra": {
     "mood": "clean, elegant, modern",
-    "description": "White and grey with modern typography"
+    "description": "White and grey with modern typography",
+    "visual_prompt_hints": "Use clean white or very light grey backgrounds with generous whitespace. Minimal decoration — let typography do the heavy lifting. Subtle shadows or thin lines as accents. Think Apple-style simplicity."
   }
 }

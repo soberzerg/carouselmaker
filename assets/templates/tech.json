@@ -10,8 +10,10 @@
   "overlay_opacity": 0.65,
   "padding": 80,
   "line_spacing": 1.4,
+  "body_text_bg_opacity": 0.6,
   "extra": {
     "mood": "futuristic, technical, innovative",
-    "description": "Dark blue with cyan accents"
+    "description": "Dark blue with cyan accents",
+    "visual_prompt_hints": "Use deep dark blue backgrounds with subtle circuit board patterns or grid lines. Cyan/teal glowing accents and data visualization elements. Think sci-fi UI meets modern tech dashboard. Subtle particle effects or light streaks."
   }
 }
