@@ -17,13 +17,13 @@ Use balanced composition with clear visual hierarchy between heading and subtitl
 <%def name="clean_zone_instruction()">\
 % if text_position == "center":
 
-=== CLEAN ZONE ===
-Reserve the center of the slide (roughly the middle 40% vertically) as a clean zone \
-with a subdued background — additional text will be overlaid there later.\
+Keep the background relatively uniform and simple in the area where text might be \
+overlaid — avoid placing busy visual details in the center of the slide.\
 % elif text_position == "bottom":
 
 === CLEAN ZONE ===
-Reserve the bottom third of the slide as a clean zone with a subdued background — additional text will be overlaid there later.\
+Keep the background relatively uniform and simple in the area where text might be \
+overlaid — avoid placing busy visual details in the bottom third of the slide.\
 % endif
 </%def>\
 <%def name="text_placement_instruction()">\
