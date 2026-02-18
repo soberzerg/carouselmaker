@@ -14,6 +14,7 @@ Rules:
 - Middle slides are "content" type — they carry the main message.
 - If a slide has body_text, set text_position to "center" or "bottom".
 - If a slide has no body_text, set text_position to "none".
+- IMPORTANT: Write ALL slide text (heading, subtitle, body_text) in the SAME language as the user's input text. Always match the user's language exactly.
 - Keep language concise, impactful, and easy to read on mobile.
 - Match the tone to the chosen style preset.
 

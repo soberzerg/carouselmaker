@@ -76,7 +76,17 @@ class TestSlideImageTemplate:
     def test_none_text_position(self) -> None:
         result = self._render(text_position="none")
         assert "main visual focus" in result
-        assert "No clean zone needed" in result
+        assert "complete slide" in result
+
+    def test_heading_in_quotes(self) -> None:
+        result = self._render()
+        # Heading text must appear in quotes for accurate Gemini text rendering
+        assert '"Test"' in result
+
+    def test_subtitle_in_quotes(self) -> None:
+        result = self._render()
+        # Subtitle text must appear in quotes for accurate Gemini text rendering
+        assert '"Sub"' in result
 
     def test_all_slide_types(self) -> None:
         for st in SlideType:

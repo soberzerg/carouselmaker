@@ -1,75 +1,81 @@
 <%def name="slide_type_instruction()">\
 % if slide_type == "hook":
-This is the HOOK slide — the first thing viewers see. \
+This is a HOOK slide — the very first thing viewers see in the carousel. \
 Make it visually striking and impossible to scroll past. \
-Use bold, dramatic composition. The text should be the hero element.\
+Use bold, dramatic composition with high visual contrast. \
+The heading text should be the dominant hero element, large and commanding.\
 % elif slide_type == "cta":
-This is the CTA (call-to-action) slide — the final slide. \
-Design should motivate action. Make it feel conclusive and energizing. \
-The text should feel like an invitation or command.\
+This is a CTA (call-to-action) slide — the final slide in the carousel. \
+The design should motivate immediate action and feel conclusive and energizing. \
+The heading text should feel like a direct invitation or a bold command.\
 % else:
-This is a CONTENT slide — the main informational body. \
-Design should be engaging but let the text be readable. \
-Use balanced composition with clear visual hierarchy.\
+This is a CONTENT slide — the main informational body of the carousel. \
+The design should be engaging yet let the text remain easily readable. \
+Use balanced composition with clear visual hierarchy between heading and subtitle.\
 % endif
 </%def>\
 <%def name="clean_zone_instruction()">\
 % if text_position == "center":
-Leave a CLEAN ZONE in the center of the slide (roughly the middle 40% vertically) \
-where additional text will be overlaid later. This zone should have a subdued or \
-semi-transparent background so overlaid text remains readable.\
+Reserve the center of the slide (roughly the middle 40% vertically) as a clean zone \
+with a subdued or semi-transparent background — additional text will be overlaid there later.\
 % elif text_position == "bottom":
-Leave a CLEAN ZONE in the bottom third of the slide where additional text will be \
-overlaid later. This zone should have a subdued or semi-transparent background so \
-overlaid text remains readable.\
+Reserve the bottom third of the slide as a clean zone with a subdued or semi-transparent \
+background — additional text will be overlaid there later.\
 % else:
-No clean zone needed — the image with baked-in text is the complete slide.\
+The image with baked-in text is the complete slide. Fill the entire canvas with the design.\
 % endif
 </%def>\
-<%def name="text_area_description()">\
+<%def name="text_placement_instruction()">\
 % if text_position == "center":
-Place the heading and subtitle in the upper portion of the slide.\
+Place the heading and subtitle in the upper portion of the slide, above the reserved clean zone.\
 % elif text_position == "bottom":
-Place the heading and subtitle in the upper half of the slide.\
+Place the heading and subtitle in the upper half of the slide, above the reserved clean zone.\
 % else:
 Center the heading and subtitle as the main visual focus of the entire slide.\
 % endif
 </%def>\
-Create a complete, professional carousel slide image for social media (LinkedIn/Instagram).
+Design a professional social media carousel slide image in portrait orientation, exactly 1080 pixels wide by 1350 pixels tall.
 
-=== SLIDE CONTENT ===
-Heading: ${heading}
-Subtitle: ${subtitle}
+The purpose of this slide is a ${style_name}-styled carousel for LinkedIn and Instagram. \
+The overall mood is ${style_mood}. ${style_description}.
 
-=== DESIGN REQUIREMENTS ===
-- Resolution: EXACTLY 1080x1350 pixels (portrait orientation)
-- The heading and subtitle text MUST be rendered directly into the image with beautiful typography
-- Text must be crisp, properly kerned, and perfectly readable
-- Use professional layout and composition
+=== TEXT TO RENDER ===
+Render the following heading text in large, bold typography using the accent color (${accent_color}):
+"${heading}"
+% if subtitle:
 
-=== STYLE ===
-Style name: ${style_name}
-Mood: ${style_mood}
-Description: ${style_description}
-Color palette:
-  - Background: ${bg_color}
-  - Text color: ${text_color}
-  - Accent color: ${accent_color}
-${visual_hints}
+Render the following subtitle text in smaller, lighter typography using the text color (${text_color}):
+"${subtitle}"
+% endif
+
+Only these exact text strings should appear in the image — no other words, labels, or watermarks.
+
+=== TYPOGRAPHY ===
+The heading "${heading}" should be rendered in a bold, clean, sans-serif font with excellent kerning and anti-aliasing. \
+Make the text crisp and perfectly legible against the background.
+% if subtitle:
+The subtitle "${subtitle}" should use a lighter weight of the same font family, \
+clearly smaller than the heading to establish visual hierarchy.
+% endif
 
 === TEXT PLACEMENT ===
-${text_area_description()}
+${text_placement_instruction()}
 
 === SLIDE TYPE ===
 ${slide_type_instruction()}
 
+=== COMPOSITION & STYLE ===
+Color palette: background ${bg_color}, text ${text_color}, accents ${accent_color}.
+% if visual_hints:
+${visual_hints}
+% endif
+
+The background should complement and support the text, never compete with it. \
+Ensure strong contrast between the text and the background for maximum readability. \
+The final result should look like a professionally designed, publication-ready social media slide.
+
 === CLEAN ZONE ===
 ${clean_zone_instruction()}
 
-=== RULES ===
-- Render the heading in large, bold typography using the accent color (${accent_color})
-- Render the subtitle in smaller, lighter typography using the text color (${text_color})
-- Background should complement the text, not compete with it
-- Do NOT add any text other than the provided heading and subtitle
-- The image must look like a professionally designed social media slide
-- Ensure high contrast between text and background for readability
+=== FORMAT ===
+Output a single image at exactly 1080x1350 pixels, portrait orientation.
