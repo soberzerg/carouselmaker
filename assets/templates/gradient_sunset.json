@@ -1,0 +1,19 @@
+{
+  "name": "Gradient Sunset",
+  "bg_color": "#1F1135",
+  "text_color": "#FFFFFF",
+  "accent_color": "#FF6B6B",
+  "heading_font_size": 74,
+  "body_font_size": 36,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.6,
+  "padding": 80,
+  "line_spacing": 1.4,
+  "body_text_bg_opacity": 0.65,
+  "extra": {
+    "mood": "warm, inspiring, creative",
+    "description": "Deep purple background with coral-red accents — sunset vibes",
+    "visual_prompt_hints": "Use deep purple-to-indigo gradient backgrounds with warm coral and pink accents. Soft glowing light effects, abstract sunset-inspired shapes. Think creative agency portfolio meets inspirational quotes. Warm color temperature throughout."
+  }
+}

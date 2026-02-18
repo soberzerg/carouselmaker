@@ -49,6 +49,7 @@ class TestSlideImageTemplate:
             visual_hints="",
             slide_type=slide_type,
             text_position=text_position,
+            image_description="",
         )
 
     def test_hook_slide_type(self) -> None:

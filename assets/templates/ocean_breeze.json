@@ -1,0 +1,19 @@
+{
+  "name": "Ocean Breeze",
+  "bg_color": "#0B3D5C",
+  "text_color": "#F0F8FF",
+  "accent_color": "#48D1CC",
+  "heading_font_size": 70,
+  "body_font_size": 35,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.55,
+  "padding": 85,
+  "line_spacing": 1.45,
+  "body_text_bg_opacity": 0.6,
+  "extra": {
+    "mood": "calm, trustworthy, refreshing",
+    "description": "Deep ocean blue with turquoise accents — fresh and professional",
+    "visual_prompt_hints": "Use deep ocean blue backgrounds with soft turquoise and teal accents. Subtle wave patterns or fluid shapes. Think marine-inspired calm energy meets modern SaaS. Gentle gradients from deep blue to lighter teal."
+  }
+}

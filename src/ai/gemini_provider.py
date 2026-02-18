@@ -48,6 +48,7 @@ class GeminiImageProvider(ImageProvider):
             visual_hints=visual_hints_block,
             text_position=slide.text_position.value,
             slide_type=slide.slide_type.value,
+            image_description=slide.image_description,
         )
 
         try:

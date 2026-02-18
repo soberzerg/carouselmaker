@@ -16,13 +16,14 @@ Use balanced composition with clear visual hierarchy between heading and subtitl
 </%def>\
 <%def name="clean_zone_instruction()">\
 % if text_position == "center":
+
+=== CLEAN ZONE ===
 Reserve the center of the slide (roughly the middle 40% vertically) as a clean zone \
-with a subdued or semi-transparent background — additional text will be overlaid there later.\
+with a subdued background — additional text will be overlaid there later.\
 % elif text_position == "bottom":
-Reserve the bottom third of the slide as a clean zone with a subdued or semi-transparent \
-background — additional text will be overlaid there later.\
-% else:
-The image with baked-in text is the complete slide. Fill the entire canvas with the design.\
+
+=== CLEAN ZONE ===
+Reserve the bottom third of the slide as a clean zone with a subdued background — additional text will be overlaid there later.\
 % endif
 </%def>\
 <%def name="text_placement_instruction()">\
@@ -64,6 +65,14 @@ ${text_placement_instruction()}
 === SLIDE TYPE ===
 ${slide_type_instruction()}
 
+=== VISUAL SCENE ===
+% if image_description:
+The background visual scene for this slide: ${image_description}
+Adapt this scene to fit the slide's color palette and style while keeping the described mood and objects.
+% else:
+Use an abstract background that matches the style mood.
+% endif
+
 === COMPOSITION & STYLE ===
 Color palette: background ${bg_color}, text ${text_color}, accents ${accent_color}.
 % if visual_hints:
@@ -73,8 +82,6 @@ ${visual_hints}
 The background should complement and support the text, never compete with it. \
 Ensure strong contrast between the text and the background for maximum readability. \
 The final result should look like a professionally designed, publication-ready social media slide.
-
-=== CLEAN ZONE ===
 ${clean_zone_instruction()}
 
 === FORMAT ===

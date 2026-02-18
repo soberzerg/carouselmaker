@@ -1,0 +1,19 @@
+{
+  "name": "Neon Nights",
+  "bg_color": "#0D0D0D",
+  "text_color": "#EAEAEA",
+  "accent_color": "#E040FB",
+  "heading_font_size": 76,
+  "body_font_size": 36,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.7,
+  "padding": 80,
+  "line_spacing": 1.4,
+  "body_text_bg_opacity": 0.7,
+  "extra": {
+    "mood": "edgy, vibrant, nightlife",
+    "description": "Pure black with electric magenta neon — cyberpunk energy",
+    "visual_prompt_hints": "Use pure black backgrounds with electric magenta and purple neon glow effects. Cyberpunk aesthetic with neon signs, light trails, and glitch elements. Think Tokyo nightlife meets synthwave album art. High contrast with vivid color pops."
+  }
+}

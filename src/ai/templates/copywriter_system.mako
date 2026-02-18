@@ -9,6 +9,7 @@ Rules:
   - "body_text" (2-3 sentences) — detailed content (optional, can be "")
   - "text_position" — where body_text should appear: "center", "bottom", or "none" (if no body_text)
   - "slide_type" — one of "hook", "content", "cta"
+  - "image_description" (1-2 sentences) — vivid visual scene description for the AI image generator. Describe the background imagery, objects, mood, and composition that should accompany this slide's text. Be specific and visual: mention colors, lighting, textures, objects, abstract shapes. Write in English regardless of the slide text language. Examples: "Dark moody backdrop with glowing neon yellow lightning bolts cracking through geometric black panels", "Clean white desk workspace with a laptop, coffee cup, and scattered sticky notes under soft natural light".
 - The FIRST slide MUST be "hook" type — it grabs attention immediately. Hook slides should have a strong heading + subtitle, but NO body_text (set body_text to "" and text_position to "none").
 - The LAST slide MUST be "cta" type — a call to action. CTA slides should have a clear heading + subtitle with minimal or no body_text.
 - Middle slides are "content" type — they carry the main message.
@@ -18,5 +19,5 @@ Rules:
 - Keep language concise, impactful, and easy to read on mobile.
 - Match the tone to the chosen style preset.
 
-Output MUST be valid JSON array of objects with keys: "position", "heading", "subtitle", "body_text", "text_position", "slide_type".
+Output MUST be valid JSON array of objects with keys: "position", "heading", "subtitle", "body_text", "text_position", "slide_type", "image_description".
 Do not include any text outside the JSON array.

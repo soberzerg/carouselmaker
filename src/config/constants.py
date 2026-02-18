@@ -40,6 +40,12 @@ STYLE_NANO_BANANA = "nano_banana"
 STYLE_MINIMALIST = "minimalist"
 STYLE_TECH = "tech"
 STYLE_CORPORATE = "corporate"
+STYLE_GRADIENT_SUNSET = "gradient_sunset"
+STYLE_OCEAN_BREEZE = "ocean_breeze"
+STYLE_NEON_NIGHTS = "neon_nights"
+STYLE_FOREST_GREEN = "forest_green"
+STYLE_ROYAL_PURPLE = "royal_purple"
+STYLE_WARM_SAND = "warm_sand"
 
 DEFAULT_STYLE = STYLE_NANO_BANANA
 
@@ -48,6 +54,12 @@ AVAILABLE_STYLES: tuple[str, ...] = (
     STYLE_MINIMALIST,
     STYLE_TECH,
     STYLE_CORPORATE,
+    STYLE_GRADIENT_SUNSET,
+    STYLE_OCEAN_BREEZE,
+    STYLE_NEON_NIGHTS,
+    STYLE_FOREST_GREEN,
+    STYLE_ROYAL_PURPLE,
+    STYLE_WARM_SAND,
 )
 
 # ── Image generation ─────────────────────────────────────
@@ -63,4 +75,10 @@ STYLE_DISPLAY_NAMES: dict[str, str] = {
     STYLE_MINIMALIST: "Minimalist",
     STYLE_TECH: "Tech",
     STYLE_CORPORATE: "Corporate",
+    STYLE_GRADIENT_SUNSET: "Gradient Sunset",
+    STYLE_OCEAN_BREEZE: "Ocean Breeze",
+    STYLE_NEON_NIGHTS: "Neon Nights",
+    STYLE_FOREST_GREEN: "Forest Green",
+    STYLE_ROYAL_PURPLE: "Royal Purple",
+    STYLE_WARM_SAND: "Warm Sand",
 }

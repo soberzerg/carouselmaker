@@ -6,16 +6,15 @@ from src.config.constants import AVAILABLE_STYLES, CREDIT_PACKS, STYLE_DISPLAY_N
 
 
 def style_picker_keyboard() -> InlineKeyboardMarkup:
-    buttons = [
-        [
-            InlineKeyboardButton(
-                text=STYLE_DISPLAY_NAMES.get(slug, slug),
-                callback_data=f"style:{slug}",
-            )
-        ]
+    all_buttons = [
+        InlineKeyboardButton(
+            text=STYLE_DISPLAY_NAMES.get(slug, slug),
+            callback_data=f"style:{slug}",
+        )
         for slug in AVAILABLE_STYLES
     ]
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    rows = [all_buttons[i : i + 2] for i in range(0, len(all_buttons), 2)]
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 def credit_pack_keyboard() -> InlineKeyboardMarkup:

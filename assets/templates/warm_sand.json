@@ -1,0 +1,19 @@
+{
+  "name": "Warm Sand",
+  "bg_color": "#FDF6EC",
+  "text_color": "#3E2C1C",
+  "accent_color": "#D4860B",
+  "heading_font_size": 70,
+  "body_font_size": 35,
+  "heading_font": "Arial",
+  "body_font": "Arial",
+  "overlay_opacity": 0.4,
+  "padding": 85,
+  "line_spacing": 1.45,
+  "body_text_bg_opacity": 0.5,
+  "extra": {
+    "mood": "warm, friendly, approachable",
+    "description": "Light cream background with amber-gold accents — warm and inviting",
+    "visual_prompt_hints": "Use warm cream and beige backgrounds with amber-gold accent elements. Soft paper-like textures or subtle grain. Think artisan coffee brand meets cozy editorial design. Warm, inviting tones that feel personal and approachable."
+  }
+}

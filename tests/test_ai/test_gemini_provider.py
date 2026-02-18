@@ -48,6 +48,7 @@ class TestPromptConstruction:
             visual_hints="Visual hints: Use dramatic black backgrounds",
             text_position=slide.text_position.value,
             slide_type=slide.slide_type.value,
+            image_description="Dramatic neon glow on dark background",
         )
         assert "Test Heading" in prompt
         assert "Test Subtitle" in prompt
@@ -70,6 +71,7 @@ class TestPromptConstruction:
                 visual_hints="",
                 text_position="none",
                 slide_type=st.value,
+                image_description="",
             )
             assert len(prompt) > 0
 
@@ -88,6 +90,7 @@ class TestPromptConstruction:
                 visual_hints="",
                 text_position=tp.value,
                 slide_type="content",
+                image_description="",
             )
             assert len(prompt) > 0
 

@@ -27,6 +27,7 @@ class SlideContent(BaseModel):
     body_text: str = ""
     text_position: TextPosition = TextPosition.NONE
     slide_type: SlideType = SlideType.CONTENT
+    image_description: str = ""
 
 
 class SlideRead(BaseModel):
