@@ -30,6 +30,8 @@ dependencies = [
     "redis>=5.2,<6",
     # HTTP client
     "httpx>=0.28,<1",
+    # Templating
+    "Mako>=1.3,<2",
 ]
 
 [project.optional-dependencies]
@@ -71,6 +73,7 @@ module = [
     "boto3.*",
     "botocore.*",
     "google.*",
+    "mako.*",
 ]
 ignore_missing_imports = true
 

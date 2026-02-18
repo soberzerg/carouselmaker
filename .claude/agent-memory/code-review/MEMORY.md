@@ -18,3 +18,12 @@
 - Migration: Alembic autogenerate, manual revision IDs sometimes used
 - Worker sends Telegram messages via direct HTTP API (httpx), not aiogram
 - `completed_counter: list[int]` pattern used as mutable counter in async gather
+- AI prompts: Mako templates in `src/ai/templates/*.mako`, loaded via `src/ai/template_loader.py`
+- `render_prompt(template_name, **kwargs)` renders Mako template with `strict_undefined=True`
+- Module-level `TemplateLookup` singleton (no caching decorator needed, Mako caches internally)
+- Old `src/ai/prompts.py` (string constants) was deleted and replaced by Mako templates
+
+## Review Findings
+- Mako templates have no HTML escaping by default -- safe for AI API prompts, but never use for user-facing HTML
+- Watch for test duplication between provider tests and template_loader tests
+- `.mako` files need to be included in wheel builds (verify hatch config includes non-.py files)

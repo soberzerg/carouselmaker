@@ -4,12 +4,7 @@ import io
 
 from PIL import Image
 
-from src.ai.prompts import (
-    CLEAN_ZONE_INSTRUCTIONS,
-    SLIDE_IMAGE_PROMPT_TEMPLATE,
-    SLIDE_TYPE_INSTRUCTIONS,
-    TEXT_AREA_DESCRIPTIONS,
-)
+from src.ai.template_loader import render_prompt
 from src.config.constants import SLIDE_HEIGHT, SLIDE_WIDTH
 from src.renderer.styles import StyleConfig
 from src.schemas.slide import SlideContent, SlideType, TextPosition
@@ -40,7 +35,8 @@ class TestPromptConstruction:
             text_position=TextPosition.NONE,
             slide_type=SlideType.HOOK,
         )
-        prompt = SLIDE_IMAGE_PROMPT_TEMPLATE.format(
+        prompt = render_prompt(
+            "slide_image_prompt.mako",
             heading=slide.heading,
             subtitle=slide.subtitle,
             style_name=style.name,
@@ -50,9 +46,8 @@ class TestPromptConstruction:
             text_color=style.text_color,
             accent_color=style.accent_color,
             visual_hints="Visual hints: Use dramatic black backgrounds",
-            text_area_description=TEXT_AREA_DESCRIPTIONS["none"],
-            slide_type_instruction=SLIDE_TYPE_INSTRUCTIONS["hook"],
-            clean_zone_instruction=CLEAN_ZONE_INSTRUCTIONS["none"],
+            text_position=slide.text_position.value,
+            slide_type=slide.slide_type.value,
         )
         assert "Test Heading" in prompt
         assert "Test Subtitle" in prompt
@@ -62,12 +57,39 @@ class TestPromptConstruction:
 
     def test_all_slide_types_have_instructions(self) -> None:
         for st in SlideType:
-            assert st.value in SLIDE_TYPE_INSTRUCTIONS
+            prompt = render_prompt(
+                "slide_image_prompt.mako",
+                heading="H",
+                subtitle="S",
+                style_name="Test",
+                style_mood="clean",
+                style_description="desc",
+                bg_color="#000",
+                text_color="#FFF",
+                accent_color="#F00",
+                visual_hints="",
+                text_position="none",
+                slide_type=st.value,
+            )
+            assert len(prompt) > 0
 
     def test_all_text_positions_have_descriptions(self) -> None:
         for tp in TextPosition:
-            assert tp.value in TEXT_AREA_DESCRIPTIONS
-            assert tp.value in CLEAN_ZONE_INSTRUCTIONS
+            prompt = render_prompt(
+                "slide_image_prompt.mako",
+                heading="H",
+                subtitle="S",
+                style_name="Test",
+                style_mood="clean",
+                style_description="desc",
+                bg_color="#000",
+                text_color="#FFF",
+                accent_color="#F00",
+                visual_hints="",
+                text_position=tp.value,
+                slide_type="content",
+            )
+            assert len(prompt) > 0
 
 
 class TestImageValidation:

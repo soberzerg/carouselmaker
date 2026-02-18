@@ -7,7 +7,7 @@ import re
 import anthropic
 
 from src.ai.base import CopywriterProvider
-from src.ai.prompts import COPYWRITER_SYSTEM_PROMPT, COPYWRITER_USER_PROMPT
+from src.ai.template_loader import render_prompt
 from src.config.settings import get_settings
 from src.schemas.slide import SlideContent, SlideType, TextPosition
 
@@ -35,7 +35,8 @@ class AnthropicCopywriter(CopywriterProvider):
         style_slug: str,
         slide_count: int,
     ) -> list[SlideContent]:
-        user_prompt = COPYWRITER_USER_PROMPT.format(
+        user_prompt = render_prompt(
+            "copywriter_user.mako",
             style_slug=style_slug,
             slide_count=slide_count,
             input_text=input_text,
@@ -44,7 +45,7 @@ class AnthropicCopywriter(CopywriterProvider):
         response = await self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
-            system=COPYWRITER_SYSTEM_PROMPT,
+            system=render_prompt("copywriter_system.mako"),
             messages=[{"role": "user", "content": user_prompt}],
         )
 

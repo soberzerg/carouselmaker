@@ -8,12 +8,7 @@ from google.genai import types
 from PIL import Image
 
 from src.ai.base import ImageProvider
-from src.ai.prompts import (
-    CLEAN_ZONE_INSTRUCTIONS,
-    SLIDE_IMAGE_PROMPT_TEMPLATE,
-    SLIDE_TYPE_INSTRUCTIONS,
-    TEXT_AREA_DESCRIPTIONS,
-)
+from src.ai.template_loader import render_prompt
 from src.config.constants import SLIDE_HEIGHT, SLIDE_WIDTH
 from src.config.settings import get_settings
 from src.renderer.styles import StyleConfig
@@ -40,7 +35,8 @@ class GeminiImageProvider(ImageProvider):
 
         visual_hints_block = f"Visual hints: {visual_hints}" if visual_hints else ""
 
-        prompt = SLIDE_IMAGE_PROMPT_TEMPLATE.format(
+        prompt = render_prompt(
+            "slide_image_prompt.mako",
             heading=slide.heading,
             subtitle=slide.subtitle or "",
             style_name=style_config.name,
@@ -50,15 +46,8 @@ class GeminiImageProvider(ImageProvider):
             text_color=style_config.text_color,
             accent_color=style_config.accent_color,
             visual_hints=visual_hints_block,
-            text_area_description=TEXT_AREA_DESCRIPTIONS.get(
-                slide.text_position.value, TEXT_AREA_DESCRIPTIONS["none"]
-            ),
-            slide_type_instruction=SLIDE_TYPE_INSTRUCTIONS.get(
-                slide.slide_type.value, SLIDE_TYPE_INSTRUCTIONS["content"]
-            ),
-            clean_zone_instruction=CLEAN_ZONE_INSTRUCTIONS.get(
-                slide.text_position.value, CLEAN_ZONE_INSTRUCTIONS["none"]
-            ),
+            text_position=slide.text_position.value,
+            slide_type=slide.slide_type.value,
         )
 
         try:
