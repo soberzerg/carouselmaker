@@ -24,8 +24,9 @@ def create_dispatcher(settings: Settings) -> Dispatcher:
     storage = RedisStorage.from_url(settings.redis.url)
     dp = Dispatcher(storage=storage)
 
-    # Shared Redis instance for middlewares
+    # Shared Redis instance for middlewares (stored on dp for cleanup in lifespan)
     redis = Redis.from_url(settings.redis.url)
+    dp["middleware_redis"] = redis
 
     # Register middlewares
     dp.message.middleware(AuthMiddleware())

@@ -2,18 +2,24 @@ from __future__ import annotations
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from testcontainers.postgres import PostgresContainer
 
 from src.models.base import Base
 
-# WARNING: Using SQLite for tests. Some PostgreSQL-specific features
-# (JSONB, FOR UPDATE, array types) are not available. Use integration
-# tests with a real PostgreSQL instance for full coverage.
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+@pytest.fixture(scope="session")
+def postgres_url():
+    """Spin up a real PostgreSQL container for the test session."""
+    with PostgresContainer("postgres:16-alpine") as pg:
+        # testcontainers returns a psycopg2 URL; convert to asyncpg
+        sync_url = pg.get_connection_url()
+        async_url = sync_url.replace("psycopg2", "asyncpg")
+        yield async_url
 
 
 @pytest.fixture
-async def engine():
-    engine = create_async_engine(TEST_DATABASE_URL, echo=True)
+async def engine(postgres_url):
+    engine = create_async_engine(postgres_url, echo=True)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield engine

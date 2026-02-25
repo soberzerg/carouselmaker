@@ -42,7 +42,7 @@ dev = [
     "ruff>=0.9,<1",
     "mypy>=1.14,<2",
     "factory-boy>=3.3,<4",
-    "aiosqlite>=0.20,<1",
+    "testcontainers[postgres]>=4.0,<5",
 ]
 
 [build-system]

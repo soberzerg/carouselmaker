@@ -127,6 +127,7 @@ class CarouselService:
         input_text: str,
         style_slug: str,
         status_message_id: int,
+        celery_task_id: str | None = None,
     ) -> None:
         if len(input_text) > MAX_INPUT_TEXT_LENGTH:
             raise ValueError(f"Input text exceeds maximum length of {MAX_INPUT_TEXT_LENGTH}")
@@ -147,6 +148,7 @@ class CarouselService:
                     input_text=input_text,
                     style_slug=style_slug,
                     status=GenerationStatus.PENDING,
+                    celery_task_id=celery_task_id,
                 )
                 session.add(generation)
                 await session.commit()

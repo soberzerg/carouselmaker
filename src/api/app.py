@@ -66,6 +66,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         await bot.delete_webhook()
     await bot.session.close()
 
+    # Close middleware Redis connection
+    middleware_redis = dp.get("middleware_redis")
+    if middleware_redis is not None:
+        await middleware_redis.aclose()
+
 
 def create_app() -> FastAPI:
     settings = get_settings()
