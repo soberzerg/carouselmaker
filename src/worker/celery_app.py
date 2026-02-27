@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import asyncio
+import logging
+
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import worker_shutdown
 
 from src.config.settings import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 def create_celery_app() -> Celery:
@@ -40,3 +46,19 @@ def create_celery_app() -> Celery:
 
 
 celery_app = create_celery_app()
+
+
+@worker_shutdown.connect  # type: ignore[untyped-decorator]
+def _on_worker_shutdown(**kwargs: object) -> None:
+    """Shut down Playwright browser on Celery worker exit."""
+    from src.renderer.browser import shutdown
+
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            future = asyncio.run_coroutine_threadsafe(shutdown(), loop)
+            future.result(timeout=10)
+        else:
+            asyncio.run(shutdown())
+    except Exception:
+        logger.debug("Failed to shut down Playwright browser", exc_info=True)

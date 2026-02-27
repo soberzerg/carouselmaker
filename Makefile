@@ -52,3 +52,4 @@ test-cov:
 # ── Setup ─────────────────────────────────────────────────
 install:
 	uv sync --extra dev
+	uv run playwright install chromium --with-deps

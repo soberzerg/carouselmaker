@@ -205,15 +205,15 @@ class CarouselService:
 
                     for sc in slides_content:
                         if sc.slide_type == SlideType.HOOK:
-                            png_bytes = renderer.render(
+                            png_bytes = await renderer.render(
                                 slide=sc, generated_image=hook_image,
                             )
                         elif sc.slide_type == SlideType.CTA:
-                            png_bytes = renderer.render(
+                            png_bytes = await renderer.render(
                                 slide=sc, cta_image=cta_image_bytes,
                             )
                         else:
-                            png_bytes = renderer.render(slide=sc)
+                            png_bytes = await renderer.render(slide=sc)
                         rendered_slides.append(png_bytes)
 
                     # Step 4: Upload to S3
