@@ -74,7 +74,8 @@ class YooKassaSettings(BaseSettings):
 
     shop_id: str = "000000"
     secret_key: SecretStr = SecretStr("")
-    webhook_secret: SecretStr = SecretStr("")
+    webhook_secret: SecretStr = SecretStr("")  # kept for backward compat, not used for verification
+    return_url: str = ""  # URL to redirect user after payment (e.g., https://t.me/your_bot)
 
 
 class Settings(BaseSettings):

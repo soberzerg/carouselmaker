@@ -10,6 +10,7 @@ from src.models.base import Base, TimestampMixin
 if TYPE_CHECKING:
     from src.models.carousel import CarouselGeneration
     from src.models.credit import CreditTransaction
+    from src.models.payment import Payment
 
 
 class User(TimestampMixin, Base):
@@ -29,6 +30,9 @@ class User(TimestampMixin, Base):
     )
     carousel_generations: Mapped[list[CarouselGeneration]] = relationship(
         "CarouselGeneration", back_populates="user", lazy="raise", cascade="all, delete-orphan"
+    )
+    payments: Mapped[list[Payment]] = relationship(
+        "Payment", back_populates="user", lazy="raise", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
