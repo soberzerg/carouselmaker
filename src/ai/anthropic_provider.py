@@ -9,7 +9,15 @@ import anthropic
 from src.ai.base import CopywriterProvider
 from src.ai.template_loader import render_prompt
 from src.config.settings import get_settings
-from src.schemas.slide import SlideContent, SlideType, TextPosition
+from src.schemas.slide import (
+    ComparisonBlock,
+    ComparisonData,
+    ContentTemplate,
+    ListingData,
+    SlideContent,
+    SlideType,
+    TextPosition,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +25,47 @@ logger = logging.getLogger(__name__)
 def _strip_markdown_fences(text: str) -> str:
     """Strip markdown code fences (```json ... ```) from AI response."""
     return re.sub(r"^```(?:json)?\s*\n?|\n?```\s*$", "", text.strip())
+
+
+def _parse_slide(raw: dict[str, object]) -> SlideContent:
+    """Parse a single slide dict from Claude, handling template-specific fields."""
+    # Extract template-specific fields before passing to SlideContent
+    listing_items = raw.pop("listing_items", None)
+    comparison_raw = raw.pop("comparison_data", None)
+
+    slide = SlideContent(**raw)
+
+    # Transform listing items into ListingData
+    if listing_items and slide.content_template == ContentTemplate.LISTING:
+        slide.listing_data = ListingData(items=listing_items)
+
+    # Transform comparison dict into ComparisonData
+    if (
+        isinstance(comparison_raw, dict)
+        and slide.content_template == ContentTemplate.COMPARISON
+    ):
+        try:
+            slide.comparison_data = ComparisonData(
+                top_block=ComparisonBlock(**comparison_raw["top_block"]),
+                bottom_block=ComparisonBlock(**comparison_raw["bottom_block"]),
+            )
+        except (KeyError, TypeError):
+            logger.warning(
+                "Invalid comparison_data for slide %d, falling back to text",
+                slide.position,
+            )
+            slide.content_template = ContentTemplate.TEXT
+            slide.comparison_data = None
+
+    # If listing template but no items, fall back to text
+    if slide.content_template == ContentTemplate.LISTING and not slide.listing_data:
+        slide.content_template = ContentTemplate.TEXT
+
+    # If comparison template but no data, fall back to text
+    if slide.content_template == ContentTemplate.COMPARISON and not slide.comparison_data:
+        slide.content_template = ContentTemplate.TEXT
+
+    return slide
 
 
 class AnthropicCopywriter(CopywriterProvider):
@@ -62,7 +111,7 @@ class AnthropicCopywriter(CopywriterProvider):
             logger.error("Failed to parse Claude response as JSON: %s", raw_text[:500])
             raise ValueError(f"AI returned invalid JSON: {e}") from e
 
-        slides = [SlideContent(**s) for s in slides_data]
+        slides = [_parse_slide(s) for s in slides_data]
 
         # Enforce slide types: first = hook, last = cta
         if slides:
@@ -71,5 +120,19 @@ class AnthropicCopywriter(CopywriterProvider):
                 slides[0].text_position = TextPosition.NONE
         if len(slides) > 1:
             slides[-1].slide_type = SlideType.CTA
+
+        # Enforce: non-content slides always use text template
+        for s in slides:
+            if s.slide_type != SlideType.CONTENT:
+                s.content_template = ContentTemplate.TEXT
+                s.listing_data = None
+                s.comparison_data = None
+
+        # Assign slide numbers (1-based for content slides)
+        content_counter = 0
+        for s in slides:
+            if s.slide_type == SlideType.CONTENT:
+                content_counter += 1
+                s.slide_number = content_counter
 
         return slides

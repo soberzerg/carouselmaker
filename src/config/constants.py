@@ -68,6 +68,12 @@ IMAGE_GEN_RETRY_BACKOFF = 1.0
 
 # ── Rendering ────────────────────────────────────────────
 OVERLAY_STRIP_PADDING = 30
+SLIDE_NUMBER_FONT_SIZE = 28
+VS_FONT_SIZE = 48
+VS_CIRCLE_RADIUS = 35
+LISTING_ITEM_GAP = 10
+COMPARISON_BLOCK_PADDING = 24
+COMPARISON_BLOCK_RADIUS = 16
 
 # ── Style display names ──────────────────────────────────
 STYLE_DISPLAY_NAMES: dict[str, str] = {
