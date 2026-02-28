@@ -20,9 +20,13 @@ FROM python:3.13-slim-bookworm AS runtime
 
 WORKDIR /app
 
-# System deps for Pillow
+# System deps for Pillow + Playwright Chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6 libjpeg62-turbo libpng16-16 \
+    libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+    libdbus-1-3 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 \
+    libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0 \
+    libxshmfence1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
@@ -37,6 +41,11 @@ COPY --from=builder /app/alembic.ini /app/alembic.ini
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
+
+# Install Playwright Chromium browser
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/.playwright-browsers
+RUN playwright install chromium \
+    && chown -R appuser:appuser /app/.playwright-browsers
 
 USER appuser
 

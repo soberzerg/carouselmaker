@@ -23,9 +23,9 @@ from src.config.settings import get_settings
 from src.db.session import get_session_factory
 from src.models.carousel import CarouselGeneration, GenerationStatus
 from src.models.slide import Slide
-from src.renderer.engine import SlideRenderer
+from src.renderer.engine import SlideRenderer, load_cta_image
 from src.renderer.styles import StyleConfig, load_style_config
-from src.schemas.slide import SlideContent
+from src.schemas.slide import SlideContent, SlideType
 from src.services.credit_service import refund_credits
 from src.storage.s3 import S3Client
 
@@ -99,9 +99,7 @@ class CarouselService:
                 )
                 if result is not None:
                     count = progress.increment()
-                    await notifier.update(
-                        f"Generating slide images... ({count}/{total} ready)"
-                    )
+                    await notifier.update(f"Generating slide images... ({count}/{total} ready)")
                     return result
 
                 if attempt < IMAGE_GEN_MAX_RETRIES:
@@ -115,9 +113,7 @@ class CarouselService:
 
             logger.warning("All retries exhausted for slide %d image generation", slide.position)
             count = progress.increment()
-            await notifier.update(
-                f"Generating slide images... ({count}/{total} ready)"
-            )
+            await notifier.update(f"Generating slide images... ({count}/{total} ready)")
             return None
 
     async def generate_and_send(
@@ -171,45 +167,49 @@ class CarouselService:
                     slides_content = slides_content[:MAX_SLIDES_PER_CAROUSEL]
                     generation.slide_count = len(slides_content)
 
-                    # Step 2: Parallel image generation
+                    # Step 2: Image generation — only for hook slide (slide 1)
                     generation.status = GenerationStatus.IMAGE_GENERATION
                     await session.commit()
-                    total = len(slides_content)
-                    await notifier.update(
-                        f"Generating slide images... (0/{total} ready)"
-                    )
+                    await notifier.update("Generating hook slide image...")
 
                     style_config = load_style_config(style_slug)
                     semaphore = asyncio.Semaphore(max_concurrency)
                     progress = _ProgressCounter()
 
-                    slide_images: list[bytes | None] = await asyncio.gather(
-                        *(
-                            self._generate_slide_image_with_retry(
-                                slide=sc,
-                                style_config=style_config,
-                                semaphore=semaphore,
-                                notifier=notifier,
-                                total=len(slides_content),
-                                progress=progress,
-                            )
-                            for sc in slides_content
-                        )
+                    hook_slide = slides_content[0]
+                    hook_image = await self._generate_slide_image_with_retry(
+                        slide=hook_slide,
+                        style_config=style_config,
+                        semaphore=semaphore,
+                        notifier=notifier,
+                        total=1,
+                        progress=progress,
                     )
 
-                    # Step 3: Rendering (overlay / passthrough / fallback)
+                    # Load pre-made CTA image for this style
+                    cta_image_bytes = load_cta_image(style_slug)
+
+                    # Step 3: Rendering
                     generation.status = GenerationStatus.RENDERING
                     await session.commit()
-                    await notifier.update("Compositing final slides...")
+                    await notifier.update(f"Rendering {len(slides_content)} slides...")
 
                     renderer = SlideRenderer(style_config)
                     rendered_slides: list[bytes] = []
 
-                    for i, sc in enumerate(slides_content):
-                        png_bytes = renderer.render(
-                            slide=sc,
-                            generated_image=slide_images[i],
-                        )
+                    for sc in slides_content:
+                        if sc.slide_type == SlideType.HOOK:
+                            png_bytes = await renderer.render(
+                                slide=sc,
+                                generated_image=hook_image,
+                            )
+                        elif sc.slide_type == SlideType.CTA:
+                            png_bytes = await renderer.render(
+                                slide=sc,
+                                cta_image=cta_image_bytes,
+                            )
+                        else:
+                            png_bytes = await renderer.render(slide=sc)
                         rendered_slides.append(png_bytes)
 
                     # Step 4: Upload to S3
@@ -220,8 +220,16 @@ class CarouselService:
                     for i, (sc, png_bytes) in enumerate(
                         zip(slides_content, rendered_slides, strict=True)
                     ):
-                        s3_key = f"{S3_CAROUSEL_PREFIX}/{user_id}/{generation.id}/{ts}_slide_{i}.png"
+                        gen_id = generation.id
+                        s3_key = f"{S3_CAROUSEL_PREFIX}/{user_id}/{gen_id}/{ts}_slide_{i}.png"
                         self.s3.upload_bytes(s3_key, png_bytes)
+
+                        # Serialize template-specific data as JSON
+                        template_data_json = None
+                        if sc.listing_data:
+                            template_data_json = sc.listing_data.model_dump_json()
+                        elif sc.comparison_data:
+                            template_data_json = sc.comparison_data.model_dump_json()
 
                         slide = Slide(
                             carousel_id=generation.id,
@@ -231,6 +239,8 @@ class CarouselService:
                             body_text=sc.body_text,
                             text_position=sc.text_position.value,
                             slide_type=sc.slide_type.value,
+                            content_template=sc.content_template.value,
+                            template_data=template_data_json,
                             rendered_s3_key=s3_key,
                         )
                         session.add(slide)

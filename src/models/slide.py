@@ -27,6 +27,8 @@ class Slide(TimestampMixin, Base):
     body_text: Mapped[str] = mapped_column(Text, nullable=False)
     text_position: Mapped[str] = mapped_column(String(20), server_default="none", nullable=False)
     slide_type: Mapped[str] = mapped_column(String(20), server_default="content", nullable=False)
+    content_template: Mapped[str] = mapped_column(String(20), server_default="text", nullable=False)
+    template_data: Mapped[str | None] = mapped_column(Text, nullable=True)
     image_s3_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
     rendered_s3_key: Mapped[str | None] = mapped_column(String(500), nullable=True)
 

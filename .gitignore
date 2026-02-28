@@ -51,3 +51,4 @@ celerybeat-schedule*
 
 # S3 local data
 minio-data/
+.pencil/
