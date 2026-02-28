@@ -3,6 +3,7 @@ from __future__ import annotations
 from src.renderer.html_builder import (
     build_comparison_html,
     build_listing_html,
+    build_quote_html,
     build_text_html,
 )
 from src.renderer.styles import StyleConfig
@@ -128,6 +129,52 @@ class TestBuildComparisonHtml:
         assert "After" in html
         # No subtitle div should be rendered (CSS class definition in style is ok)
         assert '<div class="block-subtitle">' not in html
+
+
+class TestBuildQuoteHtml:
+    def test_contains_quote_text(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Wisdom",
+            content_template=ContentTemplate.QUOTE,
+            quote_data=QuoteData(
+                quote_text="Stay hungry, stay foolish",
+                author_name="Steve Jobs",
+                author_title="Apple CEO",
+            ),
+        )
+        html = build_quote_html(slide, _make_style())
+        assert "Stay hungry, stay foolish" in html
+        assert "Steve Jobs" in html
+        assert "Apple CEO" in html
+
+    def test_works_without_author_title(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Quote",
+            content_template=ContentTemplate.QUOTE,
+            quote_data=QuoteData(
+                quote_text="Just do it",
+                author_name="Nike",
+            ),
+        )
+        html = build_quote_html(slide, _make_style())
+        assert "Just do it" in html
+        assert "Nike" in html
+
+    def test_slide_number_rendered(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Quote",
+            content_template=ContentTemplate.QUOTE,
+            quote_data=QuoteData(
+                quote_text="Test quote",
+                author_name="Author",
+            ),
+            slide_number=2,
+        )
+        html = build_quote_html(slide, _make_style())
+        assert "02" in html
 
 
 class TestQuoteDataModel:

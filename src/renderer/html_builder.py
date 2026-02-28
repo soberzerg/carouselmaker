@@ -128,6 +128,20 @@ def build_comparison_html(slide: SlideContent, style: StyleConfig) -> str:
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
 
+def build_quote_html(slide: SlideContent, style: StyleConfig) -> str:
+    """Render quote template HTML."""
+    assert slide.quote_data is not None
+    ctx = _base_context(style)
+    ctx.update({
+        "slide_number": slide.slide_number,
+        "quote_text": slide.quote_data.quote_text,
+        "author_name": slide.quote_data.author_name,
+        "author_title": slide.quote_data.author_title,
+    })
+    tmpl = _lookup.get_template("quote.html.mako")
+    return tmpl.render(**ctx)  # type: ignore[no-any-return]
+
+
 def build_hook_overlay_html(
     slide: SlideContent,
     style: StyleConfig,
