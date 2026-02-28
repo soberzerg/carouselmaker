@@ -20,6 +20,10 @@ echo "--- docker compose build ---"
 docker compose -f "$COMPOSE_FILE" build
 echo ""
 
+echo "--- docker compose down ---"
+docker compose -f "$COMPOSE_FILE" down
+echo ""
+
 echo "--- docker compose up ---"
 docker compose -f "$COMPOSE_FILE" up -d
 echo ""
