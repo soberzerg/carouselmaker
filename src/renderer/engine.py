@@ -12,6 +12,9 @@ from src.renderer.html_builder import (
     build_comparison_html,
     build_hook_overlay_html,
     build_listing_html,
+    build_quote_html,
+    build_stats_html,
+    build_steps_html,
     build_text_html,
 )
 from src.renderer.styles import StyleConfig
@@ -101,6 +104,12 @@ class SlideRenderer:
             and slide.comparison_data
         ):
             html = build_comparison_html(slide, self.style)
+        elif slide.content_template == ContentTemplate.QUOTE and slide.quote_data:
+            html = build_quote_html(slide, self.style)
+        elif slide.content_template == ContentTemplate.STATS and slide.stats_data:
+            html = build_stats_html(slide, self.style)
+        elif slide.content_template == ContentTemplate.STEPS and slide.steps_data:
+            html = build_steps_html(slide, self.style)
         else:
             html = build_text_html(slide, self.style)
         return await render_html_to_png(html, self.width, self.height)

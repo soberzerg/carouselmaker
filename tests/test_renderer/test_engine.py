@@ -13,8 +13,12 @@ from src.schemas.slide import (
     ComparisonData,
     ContentTemplate,
     ListingData,
+    QuoteData,
     SlideContent,
     SlideType,
+    StatsData,
+    StepItem,
+    StepsData,
     TextPosition,
 )
 
@@ -160,6 +164,68 @@ class TestContentTemplates:
                 ),
             ),
             slide_number=3,
+        )
+        result = await renderer.render(slide=slide)
+        assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
+
+
+class TestNewContentTemplates:
+    async def test_quote_template_renders(self) -> None:
+        renderer = SlideRenderer(_make_style())
+        slide = SlideContent(
+            position=2,
+            heading="Wisdom",
+            slide_type=SlideType.CONTENT,
+            content_template=ContentTemplate.QUOTE,
+            quote_data=QuoteData(
+                quote_text="Stay hungry, stay foolish",
+                author_name="Steve Jobs",
+                author_title="Apple CEO",
+            ),
+            slide_number=2,
+        )
+        result = await renderer.render(slide=slide)
+        assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
+
+    async def test_stats_template_renders(self) -> None:
+        renderer = SlideRenderer(_make_style())
+        slide = SlideContent(
+            position=3,
+            heading="Our Impact",
+            slide_type=SlideType.CONTENT,
+            content_template=ContentTemplate.STATS,
+            stats_data=StatsData(value="340%", label="growth"),
+            slide_number=3,
+        )
+        result = await renderer.render(slide=slide)
+        assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
+
+    async def test_steps_template_renders(self) -> None:
+        renderer = SlideRenderer(_make_style())
+        slide = SlideContent(
+            position=4,
+            heading="How to Start",
+            slide_type=SlideType.CONTENT,
+            content_template=ContentTemplate.STEPS,
+            steps_data=StepsData(items=[
+                StepItem(title="Plan", description="Define goals"),
+                StepItem(title="Execute"),
+            ]),
+            slide_number=4,
+        )
+        result = await renderer.render(slide=slide)
+        assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
+
+    async def test_quote_without_data_falls_back_to_text(self) -> None:
+        renderer = SlideRenderer(_make_style())
+        slide = SlideContent(
+            position=2,
+            heading="Fallback Quote",
+            body_text="Some text",
+            slide_type=SlideType.CONTENT,
+            content_template=ContentTemplate.QUOTE,
+            quote_data=None,
+            slide_number=2,
         )
         result = await renderer.render(slide=slide)
         assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
