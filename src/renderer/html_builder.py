@@ -157,6 +157,19 @@ def build_stats_html(slide: SlideContent, style: StyleConfig) -> str:
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
 
+def build_steps_html(slide: SlideContent, style: StyleConfig) -> str:
+    """Render steps template HTML."""
+    assert slide.steps_data is not None
+    ctx = _base_context(style)
+    ctx.update({
+        "slide_number": slide.slide_number,
+        "heading": slide.heading,
+        "steps_items": slide.steps_data.items,
+    })
+    tmpl = _lookup.get_template("steps.html.mako")
+    return tmpl.render(**ctx)  # type: ignore[no-any-return]
+
+
 def build_hook_overlay_html(
     slide: SlideContent,
     style: StyleConfig,

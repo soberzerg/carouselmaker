@@ -5,6 +5,7 @@ from src.renderer.html_builder import (
     build_listing_html,
     build_quote_html,
     build_stats_html,
+    build_steps_html,
     build_text_html,
 )
 from src.renderer.styles import StyleConfig
@@ -217,6 +218,53 @@ class TestBuildStatsHtml:
         )
         html = build_stats_html(slide, _make_style())
         assert "04" in html
+
+
+class TestBuildStepsHtml:
+    def test_contains_steps(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="How to Start",
+            content_template=ContentTemplate.STEPS,
+            steps_data=StepsData(items=[
+                StepItem(title="Define your goal", description="Be specific about what you want"),
+                StepItem(title="Make a plan", description="Break it down into small tasks"),
+                StepItem(title="Take action", description="Start with the first task today"),
+            ]),
+        )
+        html = build_steps_html(slide, _make_style())
+        assert "How to Start" in html
+        assert "Define your goal" in html
+        assert "Be specific about what you want" in html
+        assert "Make a plan" in html
+        assert "Take action" in html
+
+    def test_works_without_step_descriptions(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Quick Steps",
+            content_template=ContentTemplate.STEPS,
+            steps_data=StepsData(items=[
+                StepItem(title="First step"),
+                StepItem(title="Second step"),
+            ]),
+        )
+        html = build_steps_html(slide, _make_style())
+        assert "First step" in html
+        assert "Second step" in html
+
+    def test_slide_number_rendered(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Steps",
+            content_template=ContentTemplate.STEPS,
+            steps_data=StepsData(items=[
+                StepItem(title="Only step"),
+            ]),
+            slide_number=5,
+        )
+        html = build_steps_html(slide, _make_style())
+        assert "05" in html
 
 
 class TestQuoteDataModel:
