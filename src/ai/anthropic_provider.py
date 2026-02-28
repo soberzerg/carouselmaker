@@ -47,10 +47,7 @@ def _parse_slide(raw: dict[str, object]) -> SlideContent:
         slide.listing_data = ListingData(items=listing_items)
 
     # Transform comparison dict into ComparisonData
-    if (
-        isinstance(comparison_raw, dict)
-        and slide.content_template == ContentTemplate.COMPARISON
-    ):
+    if isinstance(comparison_raw, dict) and slide.content_template == ContentTemplate.COMPARISON:
         try:
             slide.comparison_data = ComparisonData(
                 top_block=ComparisonBlock(**comparison_raw["top_block"]),

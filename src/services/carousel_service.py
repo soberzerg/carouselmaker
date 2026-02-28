@@ -99,9 +99,7 @@ class CarouselService:
                 )
                 if result is not None:
                     count = progress.increment()
-                    await notifier.update(
-                        f"Generating slide images... ({count}/{total} ready)"
-                    )
+                    await notifier.update(f"Generating slide images... ({count}/{total} ready)")
                     return result
 
                 if attempt < IMAGE_GEN_MAX_RETRIES:
@@ -115,9 +113,7 @@ class CarouselService:
 
             logger.warning("All retries exhausted for slide %d image generation", slide.position)
             count = progress.increment()
-            await notifier.update(
-                f"Generating slide images... ({count}/{total} ready)"
-            )
+            await notifier.update(f"Generating slide images... ({count}/{total} ready)")
             return None
 
     async def generate_and_send(
@@ -196,9 +192,7 @@ class CarouselService:
                     # Step 3: Rendering
                     generation.status = GenerationStatus.RENDERING
                     await session.commit()
-                    await notifier.update(
-                        f"Rendering {len(slides_content)} slides..."
-                    )
+                    await notifier.update(f"Rendering {len(slides_content)} slides...")
 
                     renderer = SlideRenderer(style_config)
                     rendered_slides: list[bytes] = []
@@ -206,11 +200,13 @@ class CarouselService:
                     for sc in slides_content:
                         if sc.slide_type == SlideType.HOOK:
                             png_bytes = await renderer.render(
-                                slide=sc, generated_image=hook_image,
+                                slide=sc,
+                                generated_image=hook_image,
                             )
                         elif sc.slide_type == SlideType.CTA:
                             png_bytes = await renderer.render(
-                                slide=sc, cta_image=cta_image_bytes,
+                                slide=sc,
+                                cta_image=cta_image_bytes,
                             )
                         else:
                             png_bytes = await renderer.render(slide=sc)

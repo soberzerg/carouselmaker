@@ -82,14 +82,17 @@ class SlideRenderer:
         img = Image.open(io.BytesIO(cta_image_bytes)).convert("RGB")
         if img.size != (self.width, self.height):
             img = img.resize(
-                (self.width, self.height), Image.LANCZOS,  # type: ignore[attr-defined]
+                (self.width, self.height),
+                Image.LANCZOS,  # type: ignore[attr-defined]
             )
         buf = io.BytesIO()
         img.save(buf, format="PNG", optimize=True)
         return buf.getvalue()
 
     async def _render_hook_overlay(
-        self, image_bytes: bytes, slide: SlideContent,
+        self,
+        image_bytes: bytes,
+        slide: SlideContent,
     ) -> bytes:
         """Overlay body_text on a generated image via HTML template."""
         html = build_hook_overlay_html(slide, self.style, image_bytes)
@@ -99,10 +102,7 @@ class SlideRenderer:
         """Dispatch to the appropriate HTML template."""
         if slide.content_template == ContentTemplate.LISTING and slide.listing_data:
             html = build_listing_html(slide, self.style)
-        elif (
-            slide.content_template == ContentTemplate.COMPARISON
-            and slide.comparison_data
-        ):
+        elif slide.content_template == ContentTemplate.COMPARISON and slide.comparison_data:
             html = build_comparison_html(slide, self.style)
         elif slide.content_template == ContentTemplate.QUOTE and slide.quote_data:
             html = build_quote_html(slide, self.style)

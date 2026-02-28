@@ -29,7 +29,9 @@ def _make_style() -> StyleConfig:
 class TestBuildTextHtml:
     def test_contains_heading(self) -> None:
         slide = SlideContent(
-            position=1, heading="Hello World", body_text="Some text",
+            position=1,
+            heading="Hello World",
+            body_text="Some text",
         )
         html = build_text_html(slide, _make_style())
         assert "Hello World" in html
@@ -44,14 +46,18 @@ class TestBuildTextHtml:
 
     def test_slide_number_rendered(self) -> None:
         slide = SlideContent(
-            position=1, heading="Test", slide_number=3,
+            position=1,
+            heading="Test",
+            slide_number=3,
         )
         html = build_text_html(slide, _make_style())
         assert "03" in html
 
     def test_no_slide_number_badge_when_none(self) -> None:
         slide = SlideContent(
-            position=1, heading="Test", slide_number=None,
+            position=1,
+            heading="Test",
+            slide_number=None,
         )
         html = build_text_html(slide, _make_style())
         # The CSS class definition exists in base, but no badge div should be rendered
@@ -119,10 +125,12 @@ class TestBuildComparisonHtml:
             content_template=ContentTemplate.COMPARISON,
             comparison_data=ComparisonData(
                 top_block=ComparisonBlock(
-                    label="Before", items=["Point 1"],
+                    label="Before",
+                    items=["Point 1"],
                 ),
                 bottom_block=ComparisonBlock(
-                    label="After", items=["Point 2"],
+                    label="After",
+                    items=["Point 2"],
                 ),
             ),
         )
@@ -226,11 +234,15 @@ class TestBuildStepsHtml:
             position=1,
             heading="How to Start",
             content_template=ContentTemplate.STEPS,
-            steps_data=StepsData(items=[
-                StepItem(title="Define your goal", description="Be specific about what you want"),
-                StepItem(title="Make a plan", description="Break it down into small tasks"),
-                StepItem(title="Take action", description="Start with the first task today"),
-            ]),
+            steps_data=StepsData(
+                items=[
+                    StepItem(
+                        title="Define your goal", description="Be specific about what you want"
+                    ),
+                    StepItem(title="Make a plan", description="Break it down into small tasks"),
+                    StepItem(title="Take action", description="Start with the first task today"),
+                ]
+            ),
         )
         html = build_steps_html(slide, _make_style())
         assert "How to Start" in html
@@ -244,10 +256,12 @@ class TestBuildStepsHtml:
             position=1,
             heading="Quick Steps",
             content_template=ContentTemplate.STEPS,
-            steps_data=StepsData(items=[
-                StepItem(title="First step"),
-                StepItem(title="Second step"),
-            ]),
+            steps_data=StepsData(
+                items=[
+                    StepItem(title="First step"),
+                    StepItem(title="Second step"),
+                ]
+            ),
         )
         html = build_steps_html(slide, _make_style())
         assert "First step" in html
@@ -258,9 +272,11 @@ class TestBuildStepsHtml:
             position=1,
             heading="Steps",
             content_template=ContentTemplate.STEPS,
-            steps_data=StepsData(items=[
-                StepItem(title="Only step"),
-            ]),
+            steps_data=StepsData(
+                items=[
+                    StepItem(title="Only step"),
+                ]
+            ),
             slide_number=5,
         )
         html = build_steps_html(slide, _make_style())

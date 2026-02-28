@@ -93,7 +93,8 @@ class TestOverlay:
         )
         gen_image = _make_png()
         result = await renderer.render(
-            slide=slide, generated_image=gen_image,
+            slide=slide,
+            generated_image=gen_image,
         )
         # Result should be different from input (overlay was applied)
         assert result != gen_image
@@ -112,7 +113,8 @@ class TestOverlay:
         )
         gen_image = _make_png()
         result = await renderer.render(
-            slide=slide, generated_image=gen_image,
+            slide=slide,
+            generated_image=gen_image,
         )
         assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)
 
@@ -157,10 +159,12 @@ class TestContentTemplates:
             content_template=ContentTemplate.COMPARISON,
             comparison_data=ComparisonData(
                 top_block=ComparisonBlock(
-                    label="Option A", items=["Fast", "Cheap"],
+                    label="Option A",
+                    items=["Fast", "Cheap"],
                 ),
                 bottom_block=ComparisonBlock(
-                    label="Option B", items=["Slow", "Expensive"],
+                    label="Option B",
+                    items=["Slow", "Expensive"],
                 ),
             ),
             slide_number=3,
@@ -207,10 +211,12 @@ class TestNewContentTemplates:
             heading="How to Start",
             slide_type=SlideType.CONTENT,
             content_template=ContentTemplate.STEPS,
-            steps_data=StepsData(items=[
-                StepItem(title="Plan", description="Define goals"),
-                StepItem(title="Execute"),
-            ]),
+            steps_data=StepsData(
+                items=[
+                    StepItem(title="Plan", description="Define goals"),
+                    StepItem(title="Execute"),
+                ]
+            ),
             slide_number=4,
         )
         result = await renderer.render(slide=slide)
@@ -269,6 +275,7 @@ class TestFallback:
             slide_type=SlideType.CONTENT,
         )
         result = await renderer.render(
-            slide=slide, generated_image=None,
+            slide=slide,
+            generated_image=None,
         )
         assert _png_dimensions(result) == (SLIDE_WIDTH, SLIDE_HEIGHT)

@@ -51,8 +51,7 @@ def _build_font_faces() -> str:
             data = base64.b64encode(font_file.read_bytes()).decode()
             family = font_file.stem.replace("-", " ").replace("_", " ")
             rules.append(
-                f"@font-face {{ font-family: '{family}'; "
-                f"src: url('data:{mime};base64,{data}'); }}"
+                f"@font-face {{ font-family: '{family}'; src: url('data:{mime};base64,{data}'); }}"
             )
     return "\n".join(rules)
 
@@ -87,12 +86,14 @@ def _base_context(style: StyleConfig) -> dict[str, object]:
 def build_text_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render text template HTML."""
     ctx = _base_context(style)
-    ctx.update({
-        "heading": slide.heading,
-        "subtitle": slide.subtitle,
-        "body_text": slide.body_text,
-        "slide_number": slide.slide_number,
-    })
+    ctx.update(
+        {
+            "heading": slide.heading,
+            "subtitle": slide.subtitle,
+            "body_text": slide.body_text,
+            "slide_number": slide.slide_number,
+        }
+    )
     tmpl = _lookup.get_template("text.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -101,12 +102,14 @@ def build_listing_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render listing template HTML."""
     assert slide.listing_data is not None
     ctx = _base_context(style)
-    ctx.update({
-        "heading": slide.heading,
-        "subtitle": slide.subtitle,
-        "slide_number": slide.slide_number,
-        "listing_items": slide.listing_data.items,
-    })
+    ctx.update(
+        {
+            "heading": slide.heading,
+            "subtitle": slide.subtitle,
+            "slide_number": slide.slide_number,
+            "listing_items": slide.listing_data.items,
+        }
+    )
     tmpl = _lookup.get_template("listing.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -115,15 +118,17 @@ def build_comparison_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render comparison template HTML."""
     assert slide.comparison_data is not None
     ctx = _base_context(style)
-    ctx.update({
-        "slide_number": slide.slide_number,
-        "top_label": slide.comparison_data.top_block.label,
-        "top_subtitle": slide.comparison_data.top_block.subtitle,
-        "top_items": slide.comparison_data.top_block.items,
-        "bottom_label": slide.comparison_data.bottom_block.label,
-        "bottom_subtitle": slide.comparison_data.bottom_block.subtitle,
-        "bottom_items": slide.comparison_data.bottom_block.items,
-    })
+    ctx.update(
+        {
+            "slide_number": slide.slide_number,
+            "top_label": slide.comparison_data.top_block.label,
+            "top_subtitle": slide.comparison_data.top_block.subtitle,
+            "top_items": slide.comparison_data.top_block.items,
+            "bottom_label": slide.comparison_data.bottom_block.label,
+            "bottom_subtitle": slide.comparison_data.bottom_block.subtitle,
+            "bottom_items": slide.comparison_data.bottom_block.items,
+        }
+    )
     tmpl = _lookup.get_template("comparison.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -132,12 +137,14 @@ def build_quote_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render quote template HTML."""
     assert slide.quote_data is not None
     ctx = _base_context(style)
-    ctx.update({
-        "slide_number": slide.slide_number,
-        "quote_text": slide.quote_data.quote_text,
-        "author_name": slide.quote_data.author_name,
-        "author_title": slide.quote_data.author_title,
-    })
+    ctx.update(
+        {
+            "slide_number": slide.slide_number,
+            "quote_text": slide.quote_data.quote_text,
+            "author_name": slide.quote_data.author_name,
+            "author_title": slide.quote_data.author_title,
+        }
+    )
     tmpl = _lookup.get_template("quote.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -146,13 +153,15 @@ def build_stats_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render stats/big-number template HTML."""
     assert slide.stats_data is not None
     ctx = _base_context(style)
-    ctx.update({
-        "slide_number": slide.slide_number,
-        "heading": slide.heading,
-        "stats_value": slide.stats_data.value,
-        "stats_label": slide.stats_data.label,
-        "stats_context": slide.stats_data.context,
-    })
+    ctx.update(
+        {
+            "slide_number": slide.slide_number,
+            "heading": slide.heading,
+            "stats_value": slide.stats_data.value,
+            "stats_label": slide.stats_data.label,
+            "stats_context": slide.stats_data.context,
+        }
+    )
     tmpl = _lookup.get_template("stats.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -161,11 +170,13 @@ def build_steps_html(slide: SlideContent, style: StyleConfig) -> str:
     """Render steps template HTML."""
     assert slide.steps_data is not None
     ctx = _base_context(style)
-    ctx.update({
-        "slide_number": slide.slide_number,
-        "heading": slide.heading,
-        "steps_items": slide.steps_data.items,
-    })
+    ctx.update(
+        {
+            "slide_number": slide.slide_number,
+            "heading": slide.heading,
+            "steps_items": slide.steps_data.items,
+        }
+    )
     tmpl = _lookup.get_template("steps.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
@@ -179,11 +190,13 @@ def build_hook_overlay_html(
     b64 = base64.b64encode(image_bytes).decode()
     image_data_uri = f"data:image/png;base64,{b64}"
     ctx = _base_context(style)
-    ctx.update({
-        "body_text": slide.body_text,
-        "text_position": slide.text_position.value,
-        "image_data_uri": image_data_uri,
-        "body_text_bg_opacity": style.body_text_bg_opacity,
-    })
+    ctx.update(
+        {
+            "body_text": slide.body_text,
+            "text_position": slide.text_position.value,
+            "image_data_uri": image_data_uri,
+            "body_text_bg_opacity": style.body_text_bg_opacity,
+        }
+    )
     tmpl = _lookup.get_template("hook_overlay.html.mako")
     return tmpl.render(**ctx)  # type: ignore[no-any-return]

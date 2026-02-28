@@ -72,9 +72,7 @@ class TestGenerateSlideImageWithRetry:
     async def test_retries_on_failure_then_succeeds(self) -> None:
         service = CarouselService.__new__(CarouselService)
         service.image_provider = MagicMock()
-        service.image_provider.generate_slide_image = AsyncMock(
-            side_effect=[None, b"png_data"]
-        )
+        service.image_provider.generate_slide_image = AsyncMock(side_effect=[None, b"png_data"])
 
         slide = SlideContent(
             position=1,
