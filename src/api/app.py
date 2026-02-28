@@ -40,39 +40,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         ]
     )
 
-    # Set bot profile texts
-    await bot.set_my_name(name="Карусель-мейкер")
-    await bot.set_my_short_description(
-        short_description="🍌 Делаю карусели для LinkedIn и Instagram. Просто скинь текст — остальное на мне."
-    )
-    await bot.set_my_description(
-        description=(
-            "🍌 Текст → виральная карусель за минуту.\n"
-            "\n"
-            "Что умеет:\n"
-            "• AI-копирайтинг для слайдов\n"
-            "• 10 стилей оформления\n"
-            "• AI-генерация изображений\n"
-            "• Готовые PNG 1080×1350\n"
-            "\n"
-            "3 бесплатных карусели при старте.\n"
-            "Жми «Запустить» 🚀"
-        )
-    )
-    logger.info("Bot profile configured")
-
-    # Set bot avatar (one-time — Telegram persists it)
-    avatar_path = Path("assets/avatar.png")
-    if avatar_path.exists():
-        try:
-            me = await bot.get_me()
-            await bot.set_chat_photo(chat_id=me.id, photo=FSInputFile(avatar_path))
-            logger.info("Bot avatar set from %s", avatar_path)
-        except Exception:
-            logger.debug(
-                "Could not set bot avatar via API — set it via BotFather instead"
-            )
-
     # Set webhook or start polling
     webhook_url = settings.telegram.webhook_url
     polling_task: asyncio.Task[None] | None = None
