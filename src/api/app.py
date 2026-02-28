@@ -5,8 +5,9 @@ import contextlib
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, FSInputFile
 from fastapi import FastAPI
 
 from src.api.routers import admin, health, payments, webhook
@@ -59,6 +60,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         )
     )
     logger.info("Bot profile configured")
+
+    # Set bot avatar (one-time — Telegram persists it)
+    avatar_path = Path("assets/avatar.png")
+    if avatar_path.exists():
+        try:
+            me = await bot.get_me()
+            await bot.set_chat_photo(chat_id=me.id, photo=FSInputFile(avatar_path))
+            logger.info("Bot avatar set from %s", avatar_path)
+        except Exception:
+            logger.debug(
+                "Could not set bot avatar via API — set it via BotFather instead"
+            )
 
     # Set webhook or start polling
     webhook_url = settings.telegram.webhook_url
