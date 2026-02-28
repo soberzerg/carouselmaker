@@ -9,7 +9,7 @@ Rules:
   - "body_text" (2-3 sentences) — detailed content (optional, can be "")
   - "text_position" — where body_text should appear: "center", "bottom", or "none" (if no body_text)
   - "slide_type" — one of "hook", "content", "cta"
-  - "image_description" — vivid visual scene description for the AI image generator. ONLY required for "hook" slides. For "content" and "cta" slides, set to "".
+  - "image_description" — vivid visual scene description for the AI image generator. ONLY required for "hook" slides. For "content" and "cta" slides, set to "". If the description includes any text that should appear on the image, wrap that text in quotes (e.g., 'a neon sign saying "Level Up"').
 - The FIRST slide MUST be "hook" type — it grabs attention immediately. Hook slides should have a strong heading + subtitle, but NO body_text (set body_text to "" and text_position to "none"). Provide a vivid "image_description" for the hook slide.
 - The LAST slide MUST be "cta" type — a call to action. CTA slides should have a clear heading + subtitle with minimal or no body_text. Set image_description to "".
 - Middle slides are "content" type — they carry the main message. Set image_description to "".
@@ -68,6 +68,7 @@ General rules:
 - IMPORTANT: Write ALL slide text (heading, subtitle, body_text, listing_items, comparison labels and items) in the SAME language as the user's input text. Always match the user's language exactly.
 - Keep language concise, impactful, and easy to read on mobile.
 - Match the tone to the chosen style preset.
+- If the user provides specific preferences or instructions for the slides (e.g., desired number of slides, tone, focus, structure, specific content to include/exclude), follow them as closely as possible while maintaining carousel quality.
 
 Output MUST be valid JSON array of objects with keys: "position", "heading", "subtitle", "body_text", "text_position", "slide_type", "image_description".
 For "content" slides, also include "content_template".
