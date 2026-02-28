@@ -30,12 +30,12 @@ If content_template is "listing":
 
 If content_template is "comparison":
   - Add "comparison_data": {
-      "top_block": {"label": "Option A", "items": ["point 1", "point 2", "point 3"]},
-      "bottom_block": {"label": "Option B", "items": ["point 1", "point 2", "point 3"]}
+      "top_block": {"label": "Option A", "subtitle": "Short supporting line", "items": ["point 1", "point 2", "point 3"]},
+      "bottom_block": {"label": "Option B", "subtitle": "Short supporting line", "items": ["point 1", "point 2", "point 3"]}
     }
   - Each block should have 2-4 items.
-  - body_text can be empty.
-  - Labels should be short (1-3 words).
+  - body_text can be empty. heading and subtitle of the slide itself are NOT used in comparison layout.
+  - Labels should be short (1-3 words). Subtitle is a brief supporting phrase (max 8 words).
 
 General rules:
 - If a slide has body_text, set text_position to "center" or "bottom".

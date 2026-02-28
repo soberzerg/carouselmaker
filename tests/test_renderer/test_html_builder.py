@@ -85,16 +85,42 @@ class TestBuildComparisonHtml:
             content_template=ContentTemplate.COMPARISON,
             comparison_data=ComparisonData(
                 top_block=ComparisonBlock(
-                    label="Option A", items=["Fast", "Cheap"],
+                    label="Option A",
+                    subtitle="The old way",
+                    items=["Fast", "Cheap"],
                 ),
                 bottom_block=ComparisonBlock(
-                    label="Option B", items=["Slow", "Expensive"],
+                    label="Option B",
+                    subtitle="The new way",
+                    items=["Slow", "Expensive"],
                 ),
             ),
         )
         html = build_comparison_html(slide, _make_style())
         assert "Option A" in html
         assert "Option B" in html
+        assert "The old way" in html
+        assert "The new way" in html
         assert "Fast" in html
         assert "Expensive" in html
         assert "VS" in html
+
+    def test_works_without_subtitle(self) -> None:
+        slide = SlideContent(
+            position=3,
+            heading="Compare",
+            content_template=ContentTemplate.COMPARISON,
+            comparison_data=ComparisonData(
+                top_block=ComparisonBlock(
+                    label="Before", items=["Point 1"],
+                ),
+                bottom_block=ComparisonBlock(
+                    label="After", items=["Point 2"],
+                ),
+            ),
+        )
+        html = build_comparison_html(slide, _make_style())
+        assert "Before" in html
+        assert "After" in html
+        # No subtitle div should be rendered (CSS class definition in style is ok)
+        assert '<div class="block-subtitle">' not in html

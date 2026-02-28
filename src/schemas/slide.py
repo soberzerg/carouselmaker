@@ -26,6 +26,7 @@ class ContentTemplate(StrEnum):
 
 class ComparisonBlock(BaseModel):
     label: str
+    subtitle: str = ""
     items: list[str]
 
 

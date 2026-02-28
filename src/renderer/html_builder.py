@@ -116,12 +116,12 @@ def build_comparison_html(slide: SlideContent, style: StyleConfig) -> str:
     assert slide.comparison_data is not None
     ctx = _base_context(style)
     ctx.update({
-        "heading": slide.heading,
-        "subtitle": slide.subtitle,
         "slide_number": slide.slide_number,
         "top_label": slide.comparison_data.top_block.label,
+        "top_subtitle": slide.comparison_data.top_block.subtitle,
         "top_items": slide.comparison_data.top_block.items,
         "bottom_label": slide.comparison_data.bottom_block.label,
+        "bottom_subtitle": slide.comparison_data.bottom_block.subtitle,
         "bottom_items": slide.comparison_data.bottom_block.items,
     })
     tmpl = _lookup.get_template("comparison.html.mako")
