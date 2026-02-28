@@ -4,11 +4,14 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8100:8000"
     env_file: ../.env
     depends_on:
       minio:
         condition: service_healthy
+    networks:
+      - default
+      - backend
     volumes:
       - ../src:/app/src
       - ../assets:/app/assets
@@ -19,6 +22,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    restart: unless-stopped
 
   worker:
     build:
@@ -28,6 +32,9 @@ services:
     depends_on:
       minio:
         condition: service_healthy
+    networks:
+      - default
+      - backend
     volumes:
       - ../src:/app/src
       - ../assets:/app/assets
@@ -38,15 +45,20 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    restart: unless-stopped
 
   beat:
     build:
       context: ..
       dockerfile: docker/Dockerfile.worker
     env_file: ../.env
+    networks:
+      - default
+      - backend
     volumes:
       - ../src:/app/src
-    command: celery -A src.worker.celery_app beat --loglevel=info
+    command: celery -A src.worker.celery_app beat --loglevel=info -s /tmp/celerybeat-schedule
+    restart: unless-stopped
 
   minio:
     image: minio/minio:latest
@@ -65,6 +77,11 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    restart: unless-stopped
 
 volumes:
   miniodata:
+
+networks:
+  backend:
+    external: true
