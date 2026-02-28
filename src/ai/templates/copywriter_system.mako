@@ -15,11 +15,14 @@ Rules:
 - Middle slides are "content" type — they carry the main message. Set image_description to "".
 
 Content slide templates:
-- Each CONTENT slide MUST have a "content_template" field — one of "text", "listing", "comparison".
+- Each CONTENT slide MUST have a "content_template" field — one of "text", "listing", "comparison", "quote", "stats", "steps".
 - Choose the template that best fits the content of each slide:
   - "text" — for narrative paragraphs, explanations, single ideas. Uses heading + subtitle + body_text.
-  - "listing" — for enumerations, steps, features, tips. Requires "listing_items" field.
+  - "listing" — for enumerations, features, tips. Requires "listing_items" field.
   - "comparison" — for contrasting two options, before/after, pros/cons. Requires "comparison_data" field.
+  - "quote" — for inspirational quotes, expert wisdom, testimonials. Requires "quote_data" field.
+  - "stats" — for key metrics, impressive numbers, data highlights. Requires "stats_data" field.
+  - "steps" — for how-to guides, processes, action plans. Requires "steps_data" field.
 - Vary templates across slides for visual diversity — avoid using the same template for all content slides.
 - HOOK and CTA slides do NOT use content_template (omit the field or set to "text").
 
@@ -37,6 +40,28 @@ If content_template is "comparison":
   - body_text can be empty. heading and subtitle of the slide itself are NOT used in comparison layout.
   - Labels should be short (1-3 words). Subtitle is a brief supporting phrase (max 8 words).
 
+If content_template is "quote":
+  - Add "quote_data": {"quote_text": "The actual quote text", "author_name": "Author Name", "author_title": "Optional title/role"}
+  - heading and subtitle of the slide itself are NOT used in quote layout.
+  - body_text should be empty.
+  - Use for: inspirational quotes, expert wisdom, client testimonials, memorable phrases.
+  - author_title is optional (can be "").
+
+If content_template is "stats":
+  - Add "stats_data": {"value": "340%", "label": "growth in 3 months", "context": "Year over year comparison"}
+  - heading is used as a context label above the big number.
+  - body_text should be empty. subtitle is NOT used.
+  - value is a string — can include symbols like "$2.5M", "10K+", "3x".
+  - context is optional (can be "").
+  - Use for: key metrics, impressive numbers, data highlights.
+
+If content_template is "steps":
+  - Add "steps_data": {"items": [{"title": "Step title", "description": "Optional description"}, ...]}
+  - heading is used as the slide title above the steps.
+  - 2-5 steps recommended. Each step has a title (max 5 words) and optional description (max 15 words).
+  - body_text should be empty. subtitle is NOT used.
+  - Use for: how-to guides, processes, numbered sequences, action plans.
+
 General rules:
 - If a slide has body_text, set text_position to "center" or "bottom".
 - If a slide has no body_text, set text_position to "none".
@@ -48,4 +73,7 @@ Output MUST be valid JSON array of objects with keys: "position", "heading", "su
 For "content" slides, also include "content_template".
 For "listing" templates, also include "listing_items".
 For "comparison" templates, also include "comparison_data".
+For "quote" templates, also include "quote_data".
+For "stats" templates, also include "stats_data".
+For "steps" templates, also include "steps_data".
 Do not include any text outside the JSON array.
