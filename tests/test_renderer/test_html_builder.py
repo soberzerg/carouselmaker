@@ -11,7 +11,11 @@ from src.schemas.slide import (
     ComparisonData,
     ContentTemplate,
     ListingData,
+    QuoteData,
     SlideContent,
+    StatsData,
+    StepItem,
+    StepsData,
 )
 
 
@@ -124,3 +128,42 @@ class TestBuildComparisonHtml:
         assert "After" in html
         # No subtitle div should be rendered (CSS class definition in style is ok)
         assert '<div class="block-subtitle">' not in html
+
+
+class TestQuoteDataModel:
+    def test_quote_data_creation(self) -> None:
+        q = QuoteData(quote_text="Stay hungry", author_name="Steve Jobs", author_title="Apple CEO")
+        assert q.quote_text == "Stay hungry"
+        assert q.author_name == "Steve Jobs"
+        assert q.author_title == "Apple CEO"
+
+    def test_quote_data_optional_title(self) -> None:
+        q = QuoteData(quote_text="Test", author_name="Author")
+        assert q.author_title == ""
+
+
+class TestStatsDataModel:
+    def test_stats_data_creation(self) -> None:
+        s = StatsData(value="340%", label="growth in 3 months", context="Year over year")
+        assert s.value == "340%"
+        assert s.label == "growth in 3 months"
+        assert s.context == "Year over year"
+
+    def test_stats_data_optional_context(self) -> None:
+        s = StatsData(value="10K+", label="users")
+        assert s.context == ""
+
+
+class TestStepsDataModel:
+    def test_steps_data_creation(self) -> None:
+        items = [
+            StepItem(title="Step 1", description="Do this"),
+            StepItem(title="Step 2", description="Then this"),
+        ]
+        sd = StepsData(items=items)
+        assert len(sd.items) == 2
+        assert sd.items[0].title == "Step 1"
+
+    def test_step_item_optional_description(self) -> None:
+        item = StepItem(title="Just a title")
+        assert item.description == ""

@@ -22,6 +22,9 @@ class ContentTemplate(StrEnum):
     TEXT = "text"
     LISTING = "listing"
     COMPARISON = "comparison"
+    QUOTE = "quote"
+    STATS = "stats"
+    STEPS = "steps"
 
 
 class ComparisonBlock(BaseModel):
@@ -39,6 +42,27 @@ class ListingData(BaseModel):
     items: list[str]
 
 
+class QuoteData(BaseModel):
+    quote_text: str
+    author_name: str
+    author_title: str = ""
+
+
+class StatsData(BaseModel):
+    value: str
+    label: str
+    context: str = ""
+
+
+class StepItem(BaseModel):
+    title: str
+    description: str = ""
+
+
+class StepsData(BaseModel):
+    items: list[StepItem]
+
+
 class SlideContent(BaseModel):
     """AI-generated slide content."""
 
@@ -52,6 +76,9 @@ class SlideContent(BaseModel):
     content_template: ContentTemplate = ContentTemplate.TEXT
     listing_data: ListingData | None = None
     comparison_data: ComparisonData | None = None
+    quote_data: QuoteData | None = None
+    stats_data: StatsData | None = None
+    steps_data: StepsData | None = None
     slide_number: int | None = None
 
 
