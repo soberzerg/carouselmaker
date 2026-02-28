@@ -5,8 +5,9 @@ import contextlib
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from aiogram.types import BotCommand
+from aiogram.types import BotCommand, FSInputFile
 from fastapi import FastAPI
 
 from src.api.routers import admin, health, payments, webhook
@@ -31,11 +32,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Set bot commands menu
     await bot.set_my_commands(
         [
-            BotCommand(command="generate", description="Create a new carousel"),
-            BotCommand(command="styles", description="Browse style presets"),
-            BotCommand(command="credits", description="Check credit balance"),
-            BotCommand(command="buy", description="Purchase more credits"),
-            BotCommand(command="help", description="Show help message"),
+            BotCommand(command="generate", description="Создать карусель"),
+            BotCommand(command="styles", description="Стили оформления"),
+            BotCommand(command="credits", description="Мой баланс"),
+            BotCommand(command="buy", description="Купить кредиты"),
+            BotCommand(command="help", description="Помощь"),
         ]
     )
 
