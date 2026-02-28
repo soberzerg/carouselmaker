@@ -4,6 +4,7 @@ from src.renderer.html_builder import (
     build_comparison_html,
     build_listing_html,
     build_quote_html,
+    build_stats_html,
     build_text_html,
 )
 from src.renderer.styles import StyleConfig
@@ -175,6 +176,47 @@ class TestBuildQuoteHtml:
         )
         html = build_quote_html(slide, _make_style())
         assert "02" in html
+
+
+class TestBuildStatsHtml:
+    def test_contains_value_and_label(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Our Growth",
+            content_template=ContentTemplate.STATS,
+            stats_data=StatsData(
+                value="340%",
+                label="growth in 3 months",
+                context="Year over year comparison",
+            ),
+        )
+        html = build_stats_html(slide, _make_style())
+        assert "340%" in html
+        assert "growth in 3 months" in html
+        assert "Year over year comparison" in html
+        assert "Our Growth" in html
+
+    def test_works_without_context(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Metric",
+            content_template=ContentTemplate.STATS,
+            stats_data=StatsData(value="$2.5M", label="revenue"),
+        )
+        html = build_stats_html(slide, _make_style())
+        assert "$2.5M" in html
+        assert "revenue" in html
+
+    def test_slide_number_rendered(self) -> None:
+        slide = SlideContent(
+            position=1,
+            heading="Stats",
+            content_template=ContentTemplate.STATS,
+            stats_data=StatsData(value="10K+", label="users"),
+            slide_number=4,
+        )
+        html = build_stats_html(slide, _make_style())
+        assert "04" in html
 
 
 class TestQuoteDataModel:

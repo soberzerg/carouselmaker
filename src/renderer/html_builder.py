@@ -142,6 +142,21 @@ def build_quote_html(slide: SlideContent, style: StyleConfig) -> str:
     return tmpl.render(**ctx)  # type: ignore[no-any-return]
 
 
+def build_stats_html(slide: SlideContent, style: StyleConfig) -> str:
+    """Render stats/big-number template HTML."""
+    assert slide.stats_data is not None
+    ctx = _base_context(style)
+    ctx.update({
+        "slide_number": slide.slide_number,
+        "heading": slide.heading,
+        "stats_value": slide.stats_data.value,
+        "stats_label": slide.stats_data.label,
+        "stats_context": slide.stats_data.context,
+    })
+    tmpl = _lookup.get_template("stats.html.mako")
+    return tmpl.render(**ctx)  # type: ignore[no-any-return]
+
+
 def build_hook_overlay_html(
     slide: SlideContent,
     style: StyleConfig,
