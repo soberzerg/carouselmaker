@@ -14,8 +14,12 @@ from src.schemas.slide import (
     ComparisonData,
     ContentTemplate,
     ListingData,
+    QuoteData,
     SlideContent,
     SlideType,
+    StatsData,
+    StepItem,
+    StepsData,
     TextPosition,
 )
 
@@ -32,6 +36,9 @@ def _parse_slide(raw: dict[str, object]) -> SlideContent:
     # Extract template-specific fields before passing to SlideContent
     listing_items = raw.pop("listing_items", None)
     comparison_raw = raw.pop("comparison_data", None)
+    quote_raw = raw.pop("quote_data", None)
+    stats_raw = raw.pop("stats_data", None)
+    steps_raw = raw.pop("steps_data", None)
 
     slide = SlideContent(**raw)
 
@@ -57,12 +64,52 @@ def _parse_slide(raw: dict[str, object]) -> SlideContent:
             slide.content_template = ContentTemplate.TEXT
             slide.comparison_data = None
 
+    # Transform quote dict into QuoteData
+    if isinstance(quote_raw, dict) and slide.content_template == ContentTemplate.QUOTE:
+        try:
+            slide.quote_data = QuoteData(**quote_raw)
+        except (TypeError, ValueError):
+            logger.warning("Invalid quote_data for slide %d, falling back to text", slide.position)
+            slide.content_template = ContentTemplate.TEXT
+            slide.quote_data = None
+
+    # Transform stats dict into StatsData
+    if isinstance(stats_raw, dict) and slide.content_template == ContentTemplate.STATS:
+        try:
+            slide.stats_data = StatsData(**stats_raw)
+        except (TypeError, ValueError):
+            logger.warning("Invalid stats_data for slide %d, falling back to text", slide.position)
+            slide.content_template = ContentTemplate.TEXT
+            slide.stats_data = None
+
+    # Transform steps dict into StepsData
+    if isinstance(steps_raw, dict) and slide.content_template == ContentTemplate.STEPS:
+        try:
+            items = [StepItem(**item) for item in steps_raw.get("items", [])]
+            slide.steps_data = StepsData(items=items)
+        except (TypeError, ValueError, KeyError):
+            logger.warning("Invalid steps_data for slide %d, falling back to text", slide.position)
+            slide.content_template = ContentTemplate.TEXT
+            slide.steps_data = None
+
     # If listing template but no items, fall back to text
     if slide.content_template == ContentTemplate.LISTING and not slide.listing_data:
         slide.content_template = ContentTemplate.TEXT
 
     # If comparison template but no data, fall back to text
     if slide.content_template == ContentTemplate.COMPARISON and not slide.comparison_data:
+        slide.content_template = ContentTemplate.TEXT
+
+    # If quote template but no data, fall back to text
+    if slide.content_template == ContentTemplate.QUOTE and not slide.quote_data:
+        slide.content_template = ContentTemplate.TEXT
+
+    # If stats template but no data, fall back to text
+    if slide.content_template == ContentTemplate.STATS and not slide.stats_data:
+        slide.content_template = ContentTemplate.TEXT
+
+    # If steps template but no data, fall back to text
+    if slide.content_template == ContentTemplate.STEPS and not slide.steps_data:
         slide.content_template = ContentTemplate.TEXT
 
     return slide
@@ -127,6 +174,9 @@ class AnthropicCopywriter(CopywriterProvider):
                 s.content_template = ContentTemplate.TEXT
                 s.listing_data = None
                 s.comparison_data = None
+                s.quote_data = None
+                s.stats_data = None
+                s.steps_data = None
 
         # Assign slide numbers (1-based for content slides)
         content_counter = 0
